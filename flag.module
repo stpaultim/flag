@@ -1628,59 +1628,45 @@ function template_preprocess_flag(&$variables) {
   $variables['status'] = ($action == 'flag' ? 'unflagged' : 'flagged');
   $variables['flag_name_css'] = $flag_name_css;
 
-  $variables['flag_wrapper_classes_array'] = array();
-  $variables['flag_wrapper_classes_array'][] = 'flag-wrapper';
-  $variables['flag_wrapper_classes_array'][] = 'flag-' . $flag_name_css;
-  $variables['flag_wrapper_classes_array'][] = 'flag-' . $flag_name_css . '-' . $entity_id;
+  $variables['flag_wrapper_classes'] = array();
+  $variables['flag_wrapper_classes'][] = 'flag-wrapper';
+  $variables['flag_wrapper_classes'][] = 'flag-' . $flag_name_css;
+  $variables['flag_wrapper_classes'][] = 'flag-' . $flag_name_css . '-' . $entity_id;
 
-  $variables['flag_classes_array'] = array();
-  $variables['flag_classes_array'][] = 'flag';
+  $variables['flag_classes'] = array();
+  $variables['flag_classes'][] = 'flag';
   if (isset($link['href'])) {
-    $variables['flag_classes_array'][] = $variables['action'] . '-action';
-    $variables['flag_classes_array'][] = 'flag-link-' . $flag->link_type;
+    $variables['flag_classes'][] = $variables['action'] . '-action';
+    $variables['flag_classes'][] = 'flag-link-' . $flag->link_type;
   }
   else {
-    $variables['flag_classes_array'][] = $variables['action'] . '-disabled';
+    $variables['flag_classes'][] = $variables['action'] . '-disabled';
   }
   if (isset($link['attributes']['class'])) {
     $link['attributes']['class'] = is_string($link['attributes']['class']) ? array_filter(explode(' ', $link['attributes']['class'])) : $link['attributes']['class'];
-    $variables['flag_classes_array'] = array_merge($variables['flag_classes_array'], $link['attributes']['class']);
+    $variables['flag_classes'] = array_merge($variables['flag_classes'], $link['attributes']['class']);
   }
-  $variables['message_classes_array'] = array();
+  $variables['message_classes'] = array();
   if ($variables['after_flagging']) {
-    $variables['message_classes_array'][] = 'flag-message';
+    $variables['message_classes'][] = 'flag-message';
     if ($errors) {
-      $variables['message_classes_array'][] = 'flag-failure-message';
+      $variables['message_classes'][] = 'flag-failure-message';
       $variables['message_text'] = $errors;
     }
     else {
       $inverse_action = ($action == 'flag' ? 'unflag' : 'flag');
-      $variables['message_classes_array'][] = 'flag-success-message';
-      $variables['message_classes_array'][] = 'flag-' . $variables['status'] . '-message';
+      $variables['message_classes'][] = 'flag-success-message';
+      $variables['message_classes'][] = 'flag-' . $variables['status'] . '-message';
       $variables['message_text'] = $flag->get_label($inverse_action . '_message', $entity_id);
-      $variables['flag_classes_array'][] = $variables['status'];
+      $variables['flag_classes'][] = $variables['status'];
       // By default we make our JS code remove, after a few seconds, only
       // success messages.
-      $variables['message_classes_array'][] = 'flag-auto-remove';
+      $variables['message_classes'][] = 'flag-auto-remove';
     }
   }
   else {
     $variables['message_text'] = '';
   }
-}
-
-/**
- * Theme processor for flag.tpl.php.
- *
- * @param array &$variables
- *  An array of variables for the template. See 'flag.tpl.php' for their
- *  documentation.
- */
-function template_process_flag(&$variables) {
-  // Convert class arrays to strings.
-  $variables['flag_wrapper_classes'] = implode(' ', $variables['flag_wrapper_classes_array']);
-  $variables['flag_classes'] = implode(' ', $variables['flag_classes_array']);
-  $variables['message_classes'] = implode(' ', $variables['message_classes_array']);
 }
 
 /**
