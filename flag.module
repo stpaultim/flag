@@ -10,6 +10,53 @@ define('FLAG_API_VERSION', 3);
 define('FLAG_ADMIN_PATH', 'admin/structure/flags');
 define('FLAG_ADMIN_PATH_START', 3);
 
+
+
+/**
+ * Implements hook_autoload_info().
+ */
+function flag_autoload_info() {
+  return array(
+    'flag_user'                                  => 'includes/flag/flag_user.inc',
+    'flag_entity'                                => 'includes/flag/flag_entity.inc',
+    'flag_flag'                                  => 'includes/flag/flag_flag.inc',
+    'flag_broken'                                => 'includes/flag/flag_flag.inc',
+    'flag_node'                                  => 'includes/flag/flag_node.inc',
+    'flag_comment'                               => 'includes/flag/flag_comment.inc',
+
+    'FlaggingController'                         => 'includes/flag.entity.inc',
+    'FlagGlobalCookieStorage'                    => 'includes/flag.cookie_storage.inc',
+    'FlagNonGlobalCookieStorage'                 => 'includes/flag.cookie_storage.inc',
+    'FlagUpdate_2'                               => 'includes/flag.export.inc',
+    'FlagUpdate_3'                               => 'includes/flag.export.inc',
+    'FlagRulesDataWrapper'                       => 'flag.rules.inc',
+    'FlagRulesUIClass'                           => 'flag.rules.inc',
+
+    // views
+    'flag_handler_sort_flagged'                  => 'includes/views/flag_handler_sort_flagged.inc',
+    'flag_handler_relationship_content'          => 'includes/views/flag_handler_relationships.inc',
+    'flag_handler_relationship_counts'           => 'includes/views/flag_handler_relationships.inc',
+    'flag_handler_relationship_user_content'     => 'includes/views/flag_handler_relationships.inc',
+    'flag_handler_field_ops'                     => 'includes/views/flag_handler_field_ops.inc',
+    'flag_plugin_argument_validate_flaggability' => 'includes/views/flag_plugin_argument_validate_flaggability.inc',
+    'flag_handler_argument_entity_id'            => 'includes/views/flag_handler_argument_entity_id.inc',
+    'flag_handler_field_flagged'                 => 'includes/views/flag_handler_field_flagged.inc',
+    'flag_handler_filter_flagged'                => 'includes/views/flag_handler_filter_flagged.inc',
+
+    // tests
+    'FlagFlaggingCRUDTestCase'                   => 'tests/flag.test',
+    'FlagAdminTestCase'                          => 'tests/flag.test',
+    'FlagAccessFormTestCase'                     => 'tests/flag.test',
+    'FlagEntityTokensTestCase'                   => 'tests/flag.test',
+    'FlagAccessLinkTestCase'                     => 'tests/flag.test',
+    'FlagLinkTypeConfirmTestCase'                => 'tests/flag.test',
+    'FlagHookFlagAccessTestCase'                 => 'tests/flag.test',
+    'FlagFlaggingFieldTestCase'                  => 'tests/flag.test',
+    'FlagEntityFieldQueryTestCase'               => 'tests/flag.test',
+    'FlagHookInvocationsTestCase'                => 'tests/flag.test',
+  );
+}
+
 /**
  * Implements hook_entity_info().
  */
