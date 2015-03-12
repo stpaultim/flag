@@ -39,6 +39,6 @@ ul.contextual-links li .flag-wrapper {
 }
 
 .flag-waiting .flag-throbber {
-  background: url(flag-throbber.gif) no-repeat right center;
+  background: url(../images/flag-throbber.gif) no-repeat right center;
   padding-right: 13px;
 }

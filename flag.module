@@ -33,15 +33,15 @@ function flag_autoload_info() {
     'FlagRulesUIClass'                           => 'flag.rules.inc',
 
     // views
-    'flag_handler_sort_flagged'                  => 'includes/views/flag_handler_sort_flagged.inc',
-    'flag_handler_relationship_content'          => 'includes/views/flag_handler_relationships.inc',
-    'flag_handler_relationship_counts'           => 'includes/views/flag_handler_relationships.inc',
-    'flag_handler_relationship_user_content'     => 'includes/views/flag_handler_relationships.inc',
-    'flag_handler_field_ops'                     => 'includes/views/flag_handler_field_ops.inc',
-    'flag_plugin_argument_validate_flaggability' => 'includes/views/flag_plugin_argument_validate_flaggability.inc',
-    'flag_handler_argument_entity_id'            => 'includes/views/flag_handler_argument_entity_id.inc',
-    'flag_handler_field_flagged'                 => 'includes/views/flag_handler_field_flagged.inc',
-    'flag_handler_filter_flagged'                => 'includes/views/flag_handler_filter_flagged.inc',
+    'flag_handler_sort_flagged'                  => 'views/flag_handler_sort_flagged.inc',
+    'flag_handler_relationship_content'          => 'views/flag_handler_relationships.inc',
+    'flag_handler_relationship_counts'           => 'views/flag_handler_relationships.inc',
+    'flag_handler_relationship_user_content'     => 'views/flag_handler_relationships.inc',
+    'flag_handler_field_ops'                     => 'views/flag_handler_field_ops.inc',
+    'flag_plugin_argument_validate_flaggability' => 'views/flag_plugin_argument_validate_flaggability.inc',
+    'flag_handler_argument_entity_id'            => 'views/flag_handler_argument_entity_id.inc',
+    'flag_handler_field_flagged'                 => 'views/flag_handler_field_flagged.inc',
+    'flag_handler_filter_flagged'                => 'views/flag_handler_filter_flagged.inc',
 
     // tests
     'FlagFlaggingCRUDTestCase'                   => 'tests/flag.test',
@@ -265,7 +265,7 @@ function flag_menu() {
     'access callback' => 'user_access',
     'access arguments' => array('administer flags'),
     'description' => 'Configure flags for marking content with arbitrary information (such as <em>offensive</em> or <em>bookmarked</em>).',
-    'file' => 'includes/flag.admin.inc',
+    'file' => 'flag.admin.inc',
   );
   $items[FLAG_ADMIN_PATH . '/list'] = array(
     'title' => 'List',
@@ -277,7 +277,7 @@ function flag_menu() {
     'page callback' => 'flag_add_page',
     'access callback' => 'user_access',
     'access arguments' => array('administer flags'),
-    'file' => 'includes/flag.admin.inc',
+    'file' => 'flag.admin.inc',
     'type' => MENU_LOCAL_ACTION,
     'weight' => 1,
   );
@@ -307,7 +307,7 @@ function flag_menu() {
     'page arguments' => array('flag_form', FLAG_ADMIN_PATH_START + 1),
     'access callback' => 'user_access',
     'access arguments' => array('administer flags'),
-    'file' => 'includes/flag.admin.inc',
+    'file' => 'flag.admin.inc',
     'type' => MENU_LOCAL_TASK,
     // Make the flag title the default title for descendant menu items.
     'title callback' => '_flag_menu_title',
@@ -335,7 +335,7 @@ function flag_menu() {
     'page arguments' => array('flag_delete_confirm', FLAG_ADMIN_PATH_START + 1),
     'access callback' => 'user_access',
     'access arguments' => array('administer flags'),
-    'file' => 'includes/flag.admin.inc',
+    'file' => 'flag.admin.inc',
     'type' => MENU_CALLBACK,
   );
   $items[FLAG_ADMIN_PATH . '/manage/%flag/update'] = array(
@@ -355,7 +355,7 @@ function flag_menu() {
     'page arguments' => array(1, 2, 3),
     'access callback' => 'user_access',
     'access arguments' => array('access content'),
-    'file' => 'includes/flag.pages.inc',
+    'file' => 'flag.pages.inc',
     'type' => MENU_CALLBACK,
   );
   $items['flag/confirm/%/%flag/%'] = array(
@@ -364,7 +364,7 @@ function flag_menu() {
     'page arguments' => array('flag_confirm', 2, 3, 4),
     'access callback' => 'user_access',
     'access arguments' => array('access content'),
-    'file' => 'includes/flag.pages.inc',
+    'file' => 'flag.pages.inc',
     'type' => MENU_CALLBACK,
   );
 
@@ -856,7 +856,7 @@ function flag_field_attach_form($entity_type, $entity, &$form, &$form_state, $la
         '#attributes' => array('class' => array('flag-fieldset')),
         '#attached' => array(
           'js' => array(
-            'vertical-tabs' => backdrop_get_path('module', 'flag') . '/theme/flag-admin.js',
+            'vertical-tabs' => backdrop_get_path('module', 'flag') . '/js/flag-admin.js',
           ),
         ),
       );
@@ -1518,7 +1518,7 @@ function flag_flag_access_multiple($flag, $entity_ids, $account) {
  * Implements hook_theme().
  */
 function flag_theme() {
-  $path = backdrop_get_path('module', 'flag') . '/theme';
+  $path = backdrop_get_path('module', 'flag') . '/templates';
 
   return array(
     'flag' => array(
@@ -1543,14 +1543,14 @@ function flag_theme() {
     ),
     'flag_admin_listing' => array(
       'render element' => 'form',
-      'file' => 'includes/flag.admin.inc',
+      'file' => 'flag.admin.inc',
     ),
     'flag_admin_listing_disabled' => array(
       'variables' => array(
         'flags' => NULL,
         'default_flags' => NULL,
       ),
-      'file' => 'includes/flag.admin.inc',
+      'file' => 'flag.admin.inc',
     ),
     'flag_admin_page' => array(
       'variables' => array(
@@ -1558,11 +1558,11 @@ function flag_theme() {
         'default_flags' => NULL,
         'flag_admin_listing' => NULL,
       ),
-      'file' => 'includes/flag.admin.inc',
+      'file' => 'flag.admin.inc',
     ),
     'flag_form_roles' => array(
       'render element' => 'element',
-      'file' => 'includes/flag.admin.inc',
+      'file' => 'flag.admin.inc',
     ),
   );
 }
@@ -1616,7 +1616,7 @@ function template_preprocess_flag(&$variables) {
       backdrop_add_css(backdrop_get_path('module', 'flag') . '/css/flag.css');
     }
     if ($link_type['uses standard js']) {
-      backdrop_add_js(backdrop_get_path('module', 'flag') . '/theme/flag.js');
+      backdrop_add_js(backdrop_get_path('module', 'flag') . '/js/flag.js');
     }
     $initialized[$link_type['name']] = TRUE;
   }
@@ -2551,7 +2551,7 @@ function flag_users($users, $action, $flag_name) {
 function flag_views_api() {
   return array(
     'api' => 3.0,
-    'path' => backdrop_get_path('module', 'flag') . '/includes/views',
+    'path' => backdrop_get_path('module', 'flag') . '/views',
   );
 }
 

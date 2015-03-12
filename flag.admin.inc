@@ -457,8 +457,8 @@ function flag_form($form, &$form_state, $flag) {
     '#theme_wrappers' => array('form_element'),
     '#weight' => -2,
     '#attached' => array(
-      'js' => array(backdrop_get_path('module', 'flag') . '/theme/flag-admin.js'),
-      'css' => array(backdrop_get_path('module', 'flag') . '/theme/flag-admin.css'),
+      'js' => array(backdrop_get_path('module', 'flag') . '/js/flag-admin.js'),
+      'css' => array(backdrop_get_path('module', 'flag') . '/css/flag-admin.css'),
     ),
   );
   if (module_exists('session_api')) {
@@ -508,7 +508,7 @@ function flag_form($form, &$form_state, $flag) {
     // specific options go above.
     '#weight' => 18,
     '#attached' => array(
-      'js' => array(backdrop_get_path('module', 'flag') . '/theme/flag-admin.js'),
+      'js' => array(backdrop_get_path('module', 'flag') . '/js/flag-admin.js'),
     ),
     '#attributes' => array(
       'class' => array('flag-link-options'),
