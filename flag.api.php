@@ -182,7 +182,7 @@ function hook_flag_unflag($flag, $entity_id, $account, $flagging) {
  * @return
  *   Optional array: textual error with the error-name as the key.
  *   If the error name is 'access-denied' and javascript is disabled,
- *   drupal_access_denied will be called and a 403 will be returned.
+ *   backdrop_access_denied will be called and a 403 will be returned.
  *   If validation is successful, do not return a value.
  */
 function hook_flag_validate($action, $flag, $entity_id, $account, $skip_permission_check, $flagging) {

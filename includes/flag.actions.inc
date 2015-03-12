@@ -190,7 +190,7 @@ function flag_action_form($context, $entity_type) {
   if (isset($context['actions_flag'])) {
     unset($flags[$context['actions_flag']]);
   }
-  $options = drupal_map_assoc(array_keys($flags));
+  $options = backdrop_map_assoc(array_keys($flags));
 
   $form['flag_action']['#tree'] = TRUE;
   $form['flag_action']['warning'] = array(

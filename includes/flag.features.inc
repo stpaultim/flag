@@ -54,7 +54,7 @@ function flag_features_export_options() {
   // Get all flags, including disabled defaults.
   $flags = flag_get_flags() + flag_get_default_flags(TRUE);
   foreach ($flags as $name => $flag) {
-    $options[$name] = drupal_ucfirst(check_plain($flag->entity_type)) . ': ' . check_plain($flag->title);
+    $options[$name] = backdrop_ucfirst(check_plain($flag->entity_type)) . ': ' . check_plain($flag->title);
   }
   return $options;
 }
@@ -91,7 +91,7 @@ function flag_features_revert($module = NULL) {
       }
       $flag = flag_load($flag_name, TRUE);
       if ($flag && $flag->revert() === FALSE) {
-        drupal_set_message(t('Could not revert flag %flag-name to the state described in your code: Your flag was created by a different version of the Flag module than is now being used.', array('%flag-name' => $flag->name)), 'error');
+        backdrop_set_message(t('Could not revert flag %flag-name to the state described in your code: Your flag was created by a different version of the Flag module than is now being used.', array('%flag-name' => $flag->name)), 'error');
       }
 
       $entity_types[] = $flag->entity_type;

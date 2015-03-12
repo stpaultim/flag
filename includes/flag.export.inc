@@ -30,7 +30,7 @@ function flag_export_flags($flags = array(), $module = '', $indent = '') {
       }
     }
     if (!$flag->is_compatible()) {
-      drupal_set_message(t('Could not export flag %flag-name: Your flag was created by a different version of the Flag module than is now being used.', array('%flag-name' => $flag->name)), 'error');
+      backdrop_set_message(t('Could not export flag %flag-name: Your flag was created by a different version of the Flag module than is now being used.', array('%flag-name' => $flag->name)), 'error');
       continue;
     }
 
@@ -46,7 +46,7 @@ function flag_export_flags($flags = array(), $module = '', $indent = '') {
       $new_flag['locked'] = array('name');
     }
     // Allow other modules to change the exported flag.
-    drupal_alter('flag_export', $new_flag);
+    backdrop_alter('flag_export', $new_flag);
 
     // Remove properties we don't export.
     $unset_properties = array(
@@ -156,11 +156,11 @@ function flag_import_form_submit($form, &$form_state) {
       $flag->enable();
     }
     if ($flag->is_new) {
-      drupal_set_message(t('Flag @name has been imported.', array('@name' => $flag->name)));
+      backdrop_set_message(t('Flag @name has been imported.', array('@name' => $flag->name)));
       $new = TRUE;
     }
     else {
-      drupal_set_message(t('Flag @name has been updated.', array('@name' => $flag->name)));
+      backdrop_set_message(t('Flag @name has been updated.', array('@name' => $flag->name)));
     }
     $entity_types[] = $flag->entity_type;
   }
@@ -192,7 +192,7 @@ function flag_export_form($form, &$form_state, $flag = NULL) {
       $form['flags'] = array(
         '#type' => 'checkboxes',
         '#title' => t('Flags to export'),
-        '#options' => drupal_map_assoc(array_keys(flag_get_flags())),
+        '#options' => backdrop_map_assoc(array_keys(flag_get_flags())),
         '#description' => t('Exporting your flags is useful for moving flags from one site to another, or when including your flag definitions in a module.'),
       );
       $form['submit'] = array(
@@ -233,15 +233,15 @@ function flag_export_form_submit($form, &$form_state) {
  */
 function flag_update_page($flag) {
   if ($flag->is_compatible()) {
-    drupal_set_message(t('The flag %name is already up-to-date with the latest Flag API and does not need upgrading.', array('%name' => $flag->name)));
-    drupal_goto(FLAG_ADMIN_PATH);
+    backdrop_set_message(t('The flag %name is already up-to-date with the latest Flag API and does not need upgrading.', array('%name' => $flag->name)));
+    backdrop_goto(FLAG_ADMIN_PATH);
   }
 
-  drupal_set_message(t('The flag %name is currently using the Flag API version @version, which is not compatible with the current version of Flag. You can upgrade this flag by pasting the below code into <em>@module_flag_default_flags()</em> function in the @module.module file.', array('%name' => $flag->name, '@version' => $flag->api_version, '@module' => $flag->module)), 'warning');
+  backdrop_set_message(t('The flag %name is currently using the Flag API version @version, which is not compatible with the current version of Flag. You can upgrade this flag by pasting the below code into <em>@module_flag_default_flags()</em> function in the @module.module file.', array('%name' => $flag->name, '@version' => $flag->api_version, '@module' => $flag->module)), 'warning');
 
   flag_update_export($flag);
 
-  return drupal_get_form('flag_export_form', $flag);
+  return backdrop_get_form('flag_export_form', $flag);
 }
 
 /**

@@ -283,7 +283,7 @@ function flag_menu() {
   );
   $items[FLAG_ADMIN_PATH . '/import'] = array(
     'title' => 'Import',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('flag_import_form'),
     'access arguments' => array('use flag import'),
     'file' => 'includes/flag.export.inc',
@@ -292,7 +292,7 @@ function flag_menu() {
   );
   $items[FLAG_ADMIN_PATH . '/export'] = array(
     'title' => 'Export',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('flag_export_form'),
     'access arguments' => array('administer flags'),
     'file' => 'includes/flag.export.inc',
@@ -303,7 +303,7 @@ function flag_menu() {
   $items[FLAG_ADMIN_PATH . '/manage/%flag'] = array(
     // Allow for disabled flags.
     'load arguments' => array(TRUE),
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('flag_form', FLAG_ADMIN_PATH_START + 1),
     'access callback' => 'user_access',
     'access arguments' => array('administer flags'),
@@ -322,7 +322,7 @@ function flag_menu() {
   );
   $items[FLAG_ADMIN_PATH . '/manage/%flag/export'] = array(
     'title' => 'Export',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('flag_export_form', FLAG_ADMIN_PATH_START + 1),
     'access arguments' => array('administer flags'),
     'file' => 'includes/flag.export.inc',
@@ -331,7 +331,7 @@ function flag_menu() {
   );
   $items[FLAG_ADMIN_PATH . '/manage/%flag/delete'] = array(
     'title' => 'Delete flag',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('flag_delete_confirm', FLAG_ADMIN_PATH_START + 1),
     'access callback' => 'user_access',
     'access arguments' => array('administer flags'),
@@ -360,7 +360,7 @@ function flag_menu() {
   );
   $items['flag/confirm/%/%flag/%'] = array(
     'title' => 'Flag confirm',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('flag_confirm', 2, 3, 4),
     'access callback' => 'user_access',
     'access arguments' => array('access content'),
@@ -546,14 +546,14 @@ function flag_hook_info() {
  * @see hook_flag_type_info()
  */
 function flag_fetch_definition($entity_type = NULL) {
-  $definitions = &drupal_static(__FUNCTION__);
+  $definitions = &backdrop_static(__FUNCTION__);
   if (!isset($definitions)) {
     if ($cache = cache_get('flag_type_info')) {
       $definitions = $cache->data;
     }
     else {
       $definitions = module_invoke_all('flag_type_info');
-      drupal_alter('flag_type_info', $definitions);
+      backdrop_alter('flag_type_info', $definitions);
 
       cache_set('flag_type_info', $definitions);
     }
@@ -576,7 +576,7 @@ function flag_fetch_definition($entity_type = NULL) {
  *   An array of flag type names.
  */
 function flag_get_types() {
-  $types = &drupal_static(__FUNCTION__);
+  $types = &backdrop_static(__FUNCTION__);
   if (!isset($types)) {
     $types = array_keys(flag_fetch_definition());
   }
@@ -627,7 +627,7 @@ function flag_permission() {
   );
 
   // Reset static cache to ensure all flag permissions are available.
-  drupal_static_reset('flag_get_flags');
+  backdrop_static_reset('flag_get_flags');
   $flags = flag_get_flags();
   // Provide flag and unflag permissions for each flag.
   foreach ($flags as $flag_name => $flag) {
@@ -661,7 +661,7 @@ function flag_flag_link($flag, $action, $entity_id) {
   $token = flag_get_token($entity_id);
   return array(
     'href' => 'flag/' . ($flag->link_type == 'confirm' ? 'confirm/' : '') . "$action/$flag->name/$entity_id",
-    'query' => drupal_get_destination() + ($flag->link_type == 'confirm' ? array() : array('token' => $token)),
+    'query' => backdrop_get_destination() + ($flag->link_type == 'confirm' ? array() : array('token' => $token)),
   );
 }
 
@@ -856,7 +856,7 @@ function flag_field_attach_form($entity_type, $entity, &$form, &$form_state, $la
         '#attributes' => array('class' => array('flag-fieldset')),
         '#attached' => array(
           'js' => array(
-            'vertical-tabs' => drupal_get_path('module', 'flag') . '/theme/flag-admin.js',
+            'vertical-tabs' => backdrop_get_path('module', 'flag') . '/theme/flag-admin.js',
           ),
         ),
       );
@@ -876,7 +876,7 @@ function flag_field_attach_submit($entity_type, $entity, $form, &$form_state) {
   // assume our submitted form values are in $form_state['values']['flag'].
   if (isset($form['flag'])) {
     $parents = $form['flag']['#parents'];
-    $flag_values = drupal_array_get_nested_value($form_state['values'], $parents);
+    $flag_values = backdrop_array_get_nested_value($form_state['values'], $parents);
 
     // Put the form values in the entity so flag_field_attach_save() can find
     // them. We can't call flag() here as new entities have no id yet.
@@ -1180,7 +1180,7 @@ function flag_user_login(&$edit, &$account) {
     // Delete any remaining flags this user had as an anonymous user. We use the
     // proper unflag action here to make sure the count gets decremented again
     // and so that other modules can clean up their tables if needed.
-    $anonymous_user = drupal_anonymous_user();
+    $anonymous_user = backdrop_anonymous_user();
     foreach ($duplicate_flaggings as $flagging_id => $flagging) {
       $flag = flag_get_flag(NULL, $flagging['fid']);
       $flag->flag('unflag', $flagging['entity_id'], $anonymous_user, TRUE);
@@ -1518,7 +1518,7 @@ function flag_flag_access_multiple($flag, $entity_ids, $account) {
  * Implements hook_theme().
  */
 function flag_theme() {
-  $path = drupal_get_path('module', 'flag') . '/theme';
+  $path = backdrop_get_path('module', 'flag') . '/theme';
 
   return array(
     'flag' => array(
@@ -1583,7 +1583,7 @@ function flag_theme() {
  */
 function template_preprocess_flag(&$variables) {
   global $user;
-  $initialized = &drupal_static(__FUNCTION__, array());
+  $initialized = &backdrop_static(__FUNCTION__, array());
 
   // Some typing shotcuts:
   $flag =& $variables['flag'];
@@ -1613,10 +1613,10 @@ function template_preprocess_flag(&$variables) {
   // Load the JavaScript/CSS, if the link type requires it.
   if (!isset($initialized[$link_type['name']])) {
     if ($link_type['uses standard css']) {
-      drupal_add_css(drupal_get_path('module', 'flag') . '/theme/flag.css');
+      backdrop_add_css(backdrop_get_path('module', 'flag') . '/css/flag.css');
     }
     if ($link_type['uses standard js']) {
-      drupal_add_js(drupal_get_path('module', 'flag') . '/theme/flag.js');
+      backdrop_add_js(backdrop_get_path('module', 'flag') . '/theme/flag.js');
     }
     $initialized[$link_type['name']] = TRUE;
   }
@@ -1743,7 +1743,7 @@ function _flag_link_type_descriptions() {
  *   The flag count with the flag name and entity type as the array key.
  */
 function flag_get_entity_flag_counts($flag, $entity_type) {
-  $counts = &drupal_static(__FUNCTION__);
+  $counts = &backdrop_static(__FUNCTION__);
 
   // We check to see if the flag count is already in the cache,
   // if it's not, run the query.
@@ -1783,7 +1783,7 @@ function flag_get_entity_flag_counts($flag, $entity_type) {
  *   The flag count with the flag name and the uid as the array key.
  */
 function flag_get_user_flag_counts($flag, $user) {
-  $counts = &drupal_static(__FUNCTION__);
+  $counts = &backdrop_static(__FUNCTION__);
 
   // We check to see if the flag count is already in the cache,
   // if it's not, run the query.
@@ -1818,7 +1818,7 @@ function flag_get_user_flag_counts($flag, $user) {
  *   The flag count with the flag names as array keys.
  */
 function flag_get_counts($entity_type, $entity_id) {
-  $counts = &drupal_static(__FUNCTION__);
+  $counts = &backdrop_static(__FUNCTION__);
 
   if (!isset($counts[$entity_type][$entity_id])) {
     $counts[$entity_type][$entity_id] = array();
@@ -1851,7 +1851,7 @@ function flag_get_counts($entity_type, $entity_id) {
  *   (optional) Reset the internal cache and execute the SQL query another time.
  */
 function flag_get_flag_counts($flag_name, $reset = FALSE) {
-  $counts = &drupal_static(__FUNCTION__);
+  $counts = &backdrop_static(__FUNCTION__);
 
   if ($reset) {
     $counts = array();
@@ -1915,7 +1915,7 @@ function flag_get_flag($name = NULL, $fid = NULL) {
  *   An array of the structure [fid] = flag_object.
  */
 function flag_get_flags($entity_type = NULL, $content_subtype = NULL, $account = NULL) {
-  $flags = &drupal_static(__FUNCTION__);
+  $flags = &backdrop_static(__FUNCTION__);
 
   // Retrieve a list of all flags, regardless of the parameters.
   if (!isset($flags)) {
@@ -1973,7 +1973,7 @@ function flag_get_flags($entity_type = NULL, $content_subtype = NULL, $account =
 
     foreach ($flags as $flag) {
       // Allow modules implementing hook_flag_alter(&$flag) to modify each flag.
-      drupal_alter('flag', $flag);
+      backdrop_alter('flag', $flag);
     }
   }
 
@@ -2041,7 +2041,7 @@ function flag_get_default_flags($include_disabled = FALSE) {
   }
 
   // Allow modules to alter definitions using hook_flag_default_flags_alter().
-  drupal_alter('flag_default_flags', $default_flags_info);
+  backdrop_alter('flag_default_flags', $default_flags_info);
 
   foreach ($default_flags_info as $flag_info) {
     $flag = flag_flag::factory_by_array($flag_info);
@@ -2123,7 +2123,7 @@ function flag_get_flag_flagging_data($flag_name) {
  *   [flag_name] => [entity_id] => Object from above.
  */
 function flag_get_user_flags($entity_type, $entity_id = NULL, $uid = NULL, $sid = NULL) {
-  $flagged_content = &drupal_static(__FUNCTION__);
+  $flagged_content = &backdrop_static(__FUNCTION__);
 
   $uid = !isset($uid) ? $GLOBALS['user']->uid : $uid;
   $sid = !isset($sid) ? flag_get_sid($uid) : $sid;
@@ -2203,7 +2203,7 @@ function flag_get_user_flags($entity_type, $entity_id = NULL, $uid = NULL, $sid 
  *   If no flags were found an empty array is returned.
  */
 function flag_get_entity_flags($entity_type, $entity_id, $flag_name = NULL) {
-  $entity_flags = &drupal_static(__FUNCTION__, array());
+  $entity_flags = &backdrop_static(__FUNCTION__, array());
 
   if (!isset($entity_flags[$entity_type][$entity_id])) {
     $flag_names = _flag_get_flag_names();
@@ -2364,7 +2364,7 @@ function flag_reset_flag($flag, $entity_id = NULL) {
  * @see hook_flag_link_type_info_alter()
  */
 function flag_get_link_types() {
-  $link_types = &drupal_static(__FUNCTION__);
+  $link_types = &backdrop_static(__FUNCTION__);
 
   if (!isset($link_types)) {
     if ($cache = cache_get('flag_link_type_info')) {
@@ -2389,7 +2389,7 @@ function flag_get_link_types() {
           );
         }
       }
-      drupal_alter('flag_link_type_info', $link_types);
+      backdrop_alter('flag_link_type_info', $link_types);
 
       cache_set('flag_link_type_info', $link_types);
     }
@@ -2404,7 +2404,7 @@ function flag_get_link_types() {
 function flag_get_token($entity_id) {
   // Anonymous users get a less secure token, since it must be the same for all
   // anonymous users on the entire site to work with page caching.
-  return ($GLOBALS['user']->uid) ? drupal_get_token($entity_id) : md5(drupal_get_private_key() . $entity_id);
+  return ($GLOBALS['user']->uid) ? backdrop_get_token($entity_id) : md5(backdrop_get_private_key() . $entity_id);
 }
 
 /**
@@ -2433,7 +2433,7 @@ function flag_check_token($token, $entity_id) {
  * @see flag_get_sid()
  */
 function flag_set_sid($uid = NULL, $create = TRUE) {
-  $sids = &drupal_static(__FUNCTION__, array());
+  $sids = &backdrop_static(__FUNCTION__, array());
 
   if (!isset($uid)) {
     $uid = $GLOBALS['user']->uid;
@@ -2520,7 +2520,7 @@ function flag_nodes($nodes, $action, $flag_name) {
     $performed |= flag($action, $flag_name, $nid);
   }
   if ($performed) {
-    drupal_set_message(t('The update has been performed.'));
+    backdrop_set_message(t('The update has been performed.'));
   }
 }
 
@@ -2565,7 +2565,7 @@ function flag_users($users, $action, $flag_name) {
 function flag_views_api() {
   return array(
     'api' => 3.0,
-    'path' => drupal_get_path('module', 'flag') . '/includes/views',
+    'path' => backdrop_get_path('module', 'flag') . '/includes/views',
   );
 }
 
@@ -2578,7 +2578,7 @@ function flag_features_api() {
       'name' => t('Flag'),
       'feature_source' => TRUE,
       'default_hook' => 'flag_default_flags',
-      'file' => drupal_get_path('module', 'flag') . '/includes/flag.features.inc',
+      'file' => backdrop_get_path('module', 'flag') . '/includes/flag.features.inc',
     ),
   );
 }

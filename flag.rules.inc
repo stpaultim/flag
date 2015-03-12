@@ -508,7 +508,7 @@ function flag_rules_condition_info() {
     $label = isset($entity_info[$type]['label']) ? $entity_info[$type]['label'] : $type;
     $items += array(
       'flag_threshold_' . $type => array(
-        'label' => drupal_ucfirst(t('@type has flagging count', array('@type' => $label))),
+        'label' => backdrop_ucfirst(t('@type has flagging count', array('@type' => $label))),
         'base' => 'flag_rules_condition_threshold',
         'parameter' => array(
           'flag' => array(
@@ -544,7 +544,7 @@ function flag_rules_condition_info() {
         'access callback' => 'flag_rules_integration_access',
       ),
       'flag_flagged_' . $type => array(
-        'label' => drupal_ucfirst(t('@type is flagged', array('@type' => $label))),
+        'label' => backdrop_ucfirst(t('@type is flagged', array('@type' => $label))),
         'base' => 'flag_rules_condition_flagged',
         'parameter' => array(
           'flag' => array(

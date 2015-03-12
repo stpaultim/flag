@@ -11,7 +11,7 @@
 function flag_admin_page() {
   $flags = flag_get_flags();
   $default_flags = flag_get_default_flags(TRUE);
-  $flag_admin_listing = drupal_get_form('flag_admin_listing', $flags);
+  $flag_admin_listing = backdrop_get_form('flag_admin_listing', $flags);
   return theme('flag_admin_page', array(
     'flags' => $flags,
     'default_flags' => $default_flags,
@@ -90,7 +90,7 @@ function theme_flag_admin_listing($variables) {
     $row = array();
     $row[] = check_plain($flag->title) . ' <small>(' . t('Machine name: @name', array('@name' => $flag->name)) . ')</small>';
     if (count($flags) > 1) {
-      $row[] = drupal_render($form['flags'][$flag->name]['weight']);
+      $row[] = backdrop_render($form['flags'][$flag->name]['weight']);
     }
     $row[] = $flag->entity_type;
     $row[] = empty($roles) ? '<em>' . t('No roles') . '</em>' : implode(', ', $roles);
@@ -109,7 +109,7 @@ function theme_flag_admin_listing($variables) {
     );
   }
   elseif (count($flags) > 1) {
-    drupal_add_tabledrag('flag-admin-listing-table', 'order', 'sibling', 'flag-weight');
+    backdrop_add_tabledrag('flag-admin-listing-table', 'order', 'sibling', 'flag-weight');
   }
 
   $header = array(t('Flag'));
@@ -128,7 +128,7 @@ function theme_flag_admin_listing($variables) {
     'rows' => $rows,
     'attributes' => array('id' => 'flag-admin-listing-table'),
   ));
-  $output .= drupal_render_children($form);
+  $output .= backdrop_render_children($form);
 
   return $output;
 }
@@ -169,7 +169,7 @@ function theme_flag_admin_listing_disabled($variables) {
   }
 
   if (isset($flag_updates_needed)) {
-    drupal_set_message(t('Some flags provided by modules need to be updated to a new format before they can be used with this version of Flag. See the disabled flags for a list of flags that need updating.'), 'warning');
+    backdrop_set_message(t('Some flags provided by modules need to be updated to a new format before they can be used with this version of Flag. See the disabled flags for a list of flags that need updating.'), 'warning');
   }
 
   if (!empty($rows)) {
@@ -194,7 +194,7 @@ function theme_flag_admin_page($variables) {
 
   $output = '';
 
-  $output .= drupal_render($variables['flag_admin_listing']);
+  $output .= backdrop_render($variables['flag_admin_listing']);
   $output .= theme('flag_admin_listing_disabled', array('flags' => $flags, 'default_flags' => $default_flags));
 
   if (!module_exists('views')) {
@@ -246,12 +246,12 @@ function flag_add_page($entity_type = NULL) {
     // Mark the flag as new.
     $flag->is_new = TRUE;
     $type_info = flag_fetch_definition($entity_type);
-    drupal_set_title(t('Add new @type flag', array('@type' => $type_info['title'])));
-    return drupal_get_form('flag_form', $flag);
+    backdrop_set_title(t('Add new @type flag', array('@type' => $type_info['title'])));
+    return backdrop_get_form('flag_form', $flag);
   }
 
-  drupal_set_title(t('Select flag type'));
-  return drupal_get_form('flag_add_form');
+  backdrop_set_title(t('Select flag type'));
+  return backdrop_get_form('flag_add_form');
 }
 
 /**
@@ -457,8 +457,8 @@ function flag_form($form, &$form_state, $flag) {
     '#theme_wrappers' => array('form_element'),
     '#weight' => -2,
     '#attached' => array(
-      'js' => array(drupal_get_path('module', 'flag') . '/theme/flag-admin.js'),
-      'css' => array(drupal_get_path('module', 'flag') . '/theme/flag-admin.css'),
+      'js' => array(backdrop_get_path('module', 'flag') . '/theme/flag-admin.js'),
+      'css' => array(backdrop_get_path('module', 'flag') . '/theme/flag-admin.css'),
     ),
   );
   if (module_exists('session_api')) {
@@ -508,7 +508,7 @@ function flag_form($form, &$form_state, $flag) {
     // specific options go above.
     '#weight' => 18,
     '#attached' => array(
-      'js' => array(drupal_get_path('module', 'flag') . '/theme/flag-admin.js'),
+      'js' => array(backdrop_get_path('module', 'flag') . '/theme/flag-admin.js'),
     ),
     '#attributes' => array(
       'class' => array('flag-link-options'),
@@ -689,7 +689,7 @@ function flag_form_submit($form, &$form_state) {
 
   $flag->save();
   $flag->enable();
-  drupal_set_message(t('Flag @title has been saved.', array('@title' => $flag->get_title())));
+  backdrop_set_message(t('Flag @title has been saved.', array('@title' => $flag->get_title())));
   // We clear caches more vigorously if the flag was new.
   _flag_clear_cache($flag->entity_type, !empty($flag->is_new));
 
@@ -741,8 +741,8 @@ function theme_flag_form_roles($variables) {
     unset($element['unflag'][$role]['#title']);
     $element['flag'][$role]['#attributes']['class'] = array('flag-access');
     $element['unflag'][$role]['#attributes']['class'] = array('unflag-access');
-    $row[] = array('class' => array('checkbox'), 'data' => drupal_render($element['flag'][$role]));
-    $row[] = array('class' => array('checkbox'), 'data' => drupal_render($element['unflag'][$role]));
+    $row[] = array('class' => array('checkbox'), 'data' => backdrop_render($element['flag'][$role]));
+    $row[] = array('class' => array('checkbox'), 'data' => backdrop_render($element['unflag'][$role]));
     $row[] = $role_name;
     $rows[] = $row;
   }
@@ -778,7 +778,7 @@ function flag_delete_confirm_submit($form, &$form_state) {
     $flag->disable();
     _flag_clear_cache($flag->entity_type, TRUE);
   }
-  drupal_set_message(t('Flag @name has been deleted.', array('@name' => $flag->get_title())));
+  backdrop_set_message(t('Flag @name has been deleted.', array('@name' => $flag->get_title())));
   $form_state['redirect'] = FLAG_ADMIN_PATH;
 }
 
@@ -788,7 +788,7 @@ function flag_delete_confirm_submit($form, &$form_state) {
 function flag_check_link_types($element) {
   $link_types = flag_get_link_types();
   if (!isset($link_types[$element['#value']])) {
-    drupal_set_message(t('This flag uses a link type of %type, which does not exist.', array('%type' => $element['#value'])), 'error');
+    backdrop_set_message(t('This flag uses a link type of %type, which does not exist.', array('%type' => $element['#value'])), 'error');
   }
   return $element;
 }
@@ -811,7 +811,7 @@ function _flag_clear_cache($entity_types, $is_insert_or_delete = FALSE) {
 
   // Reset our flags cache, thereby making the following code aware of the
   // modifications.
-  drupal_static_reset('flag_get_flags');
+  backdrop_static_reset('flag_get_flags');
 
   if ($is_insert_or_delete) {
     // A new or deleted flag means we are changing bundles on the Flagging

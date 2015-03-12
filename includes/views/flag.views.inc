@@ -15,13 +15,13 @@ function flag_views_plugins() {
         'title' => t('Flaggable node'),
         'flag type' => 'node',
         'handler' => 'flag_plugin_argument_validate_flaggability',
-        'path' => drupal_get_path('module', 'flag') . '/includes',
+        'path' => backdrop_get_path('module', 'flag') . '/includes',
       ),
       'flag_flaggable_user' => array(
         'title' => t('Flaggable user'),
         'flag type' => 'user',
         'handler' => 'flag_plugin_argument_validate_flaggability',
-        'path' => drupal_get_path('module', 'flag') . '/includes',
+        'path' => backdrop_get_path('module', 'flag') . '/includes',
       ),
       // A comment validator won't be very useful. Moreover, having it will
       // contribute to the argument object's $options polution, so let's skip
@@ -279,7 +279,7 @@ function flag_views_flag_config_form($form_type, $entity_type, $current_flag) {
  * Helper function that gets the first defined flag and returns its name.
  */
 function flag_views_flag_default($entity_type) {
-  $default_flag = &drupal_static(__FUNCTION__, array());
+  $default_flag = &backdrop_static(__FUNCTION__, array());
 
   if (!array_key_exists($entity_type, $default_flag)) {
     $flags = flag_get_flags($entity_type);

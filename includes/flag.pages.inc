@@ -44,30 +44,30 @@ function flag_page($action, $flag, $entity_id) {
 
   // If successful, return data according to the request type.
   if ($js) {
-    drupal_add_http_header('Content-Type', 'text/javascript; charset=utf-8');
+    backdrop_add_http_header('Content-Type', 'text/javascript; charset=utf-8');
     $flag->link_type = 'toggle';
     // Any errors that have been set will be output below
     // the flag link with javascript.
-    print drupal_json_encode(flag_build_javascript_info($flag, $entity_id));
-    drupal_exit();
+    print backdrop_json_encode(flag_build_javascript_info($flag, $entity_id));
+    backdrop_exit();
   }
   else {
     $errors = $flag->get_errors();
     if ($errors) {
       // If an error was received, set a message and exit.
       foreach ($errors as $error) {
-        drupal_set_message($error, 'error');
+        backdrop_set_message($error, 'error');
       }
       if (isset($errors['access-denied'])) {
         return MENU_ACCESS_DENIED;
       }
       else {
-        drupal_goto();
+        backdrop_goto();
       }
     }
     else {
-      drupal_set_message($flag->get_label($action . '_message', $entity_id));
-      drupal_goto();
+      backdrop_set_message($flag->get_label($action . '_message', $entity_id));
+      backdrop_goto();
     }
   }
 }
@@ -167,12 +167,12 @@ function flag_confirm_submit(&$form, &$form_state) {
   if (!$result) {
     if ($errors = $flag->get_errors()) {
       foreach ($errors as $error) {
-        drupal_set_message($error, 'error');
+        backdrop_set_message($error, 'error');
       }
     }
   }
   else {
-    drupal_set_message($flag->get_label($action . '_message', $entity_id));
+    backdrop_set_message($flag->get_label($action . '_message', $entity_id));
   }
 }
 
@@ -194,6 +194,6 @@ function flag_build_javascript_info($flag, $entity_id) {
     'flagName' => $flag->name,
     'flagStatus' => $flag->is_flagged($entity_id) ? 'flagged' : 'unflagged',
   );
-  drupal_alter('flag_javascript_info', $info, $flag);
+  backdrop_alter('flag_javascript_info', $info, $flag);
   return $info;
 }

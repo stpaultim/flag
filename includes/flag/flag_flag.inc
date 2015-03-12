@@ -100,7 +100,7 @@ class flag_flag {
    *
    * The array keys should reflect the type of error being set. At this time,
    * the only "special" behavior related to the array keys is that
-   * drupal_access_denied() is called when the key is 'access-denied' and
+   * backdrop_access_denied() is called when the key is 'access-denied' and
    * javascript is disabled.
    *
    * @var array
@@ -160,7 +160,7 @@ class flag_flag {
     }
 
     if (isset($config['locked']) && is_array($config['locked'])) {
-      $flag->locked = drupal_map_assoc($config['locked']);
+      $flag->locked = backdrop_map_assoc($config['locked']);
     }
 
     return $flag;
@@ -203,7 +203,7 @@ class flag_flag {
     $options = array_merge($options, $link_type['options']);
 
     // Allow other modules to change the flag options.
-    drupal_alter('flag_options', $options, $this);
+    backdrop_alter('flag_options', $options, $this);
     return $options;
   }
   /**
@@ -813,16 +813,16 @@ class flag_flag {
     $flagging->timestamp = REQUEST_TIME;
 
     // Save the flagging entity.
-    drupal_write_record('flagging', $flagging);
+    backdrop_write_record('flagging', $flagging);
 
     // Clear various caches; we don't want code running after us to report
     // wrong counts or false flaggings.
-    drupal_static_reset('flag_get_user_flags');
-    drupal_static_reset('flag_get_entity_flags');
+    backdrop_static_reset('flag_get_user_flags');
+    backdrop_static_reset('flag_get_entity_flags');
     // Despite being named in the same pattern as the count API functions, these
     // query the {flagging} table, so are reset here.
-    drupal_static_reset('flag_get_entity_flag_counts');
-    drupal_static_reset('flag_get_user_flag_counts');
+    backdrop_static_reset('flag_get_entity_flag_counts');
+    backdrop_static_reset('flag_get_user_flag_counts');
 
     $this->_increase_count($entity_id);
     // We're writing out a flagging entity even when we aren't passed one
@@ -913,12 +913,12 @@ class flag_flag {
 
       // Clear various caches; we don't want code running after us to report
       // wrong counts or false flaggings.
-      drupal_static_reset('flag_get_user_flags');
-      drupal_static_reset('flag_get_entity_flags');
+      backdrop_static_reset('flag_get_user_flags');
+      backdrop_static_reset('flag_get_entity_flags');
       // Despite being named in the same pattern as the count API functions, these
       // query the {flagging} table, so are reset here.
-      drupal_static_reset('flag_get_entity_flag_counts');
-      drupal_static_reset('flag_get_user_flag_counts');
+      backdrop_static_reset('flag_get_entity_flag_counts');
+      backdrop_static_reset('flag_get_user_flag_counts');
     }
     catch (Exception $e) {
       $transaction->rollback();
@@ -1078,8 +1078,8 @@ class flag_flag {
 
     // Reset the static cache of flag counts, so code running after this gets
     // correct counts.
-    drupal_static_reset('flag_get_counts');
-    drupal_static_reset('flag_get_flag_counts');
+    backdrop_static_reset('flag_get_counts');
+    backdrop_static_reset('flag_get_flag_counts');
   }
 
   /**
@@ -1113,8 +1113,8 @@ class flag_flag {
 
     // Reset the static cache of flag counts, so code running after this gets
     // correct counts.
-    drupal_static_reset('flag_get_counts');
-    drupal_static_reset('flag_get_flag_counts');
+    backdrop_static_reset('flag_get_counts');
+    backdrop_static_reset('flag_get_flag_counts');
   }
 
   /**
@@ -1470,7 +1470,7 @@ class flag_flag {
         $default_flag = clone $default_flag;
         $default_flag->fid = $this->fid;
         $default_flag->save();
-        drupal_static_reset('flag_get_flags');
+        backdrop_static_reset('flag_get_flags');
         return TRUE;
       }
       else {
@@ -1544,7 +1544,7 @@ class flag_flag {
     // JavaScript code. Currently, only our "anti-crawlers" mechanism uses it.
     if ($user->uid == 0 && !isset($js_added['anonymous'])) {
       $js_added['anonymous'] = TRUE;
-      drupal_add_js(array('flag' => array('anonymous' => TRUE)), 'setting');
+      backdrop_add_js(array('flag' => array('anonymous' => TRUE)), 'setting');
     }
 
     // If the flagging user is anonymous and the page cache is enabled, we
@@ -1569,7 +1569,7 @@ class flag_flag {
           'entity_id' => $entity_id,
           'after_flagging' => $after_flagging,
         ));
-        drupal_add_js(array('flag' => array('templates' => array($this->name . '_' . $entity_id => $js_template))), 'setting');
+        backdrop_add_js(array('flag' => array('templates' => array($this->name . '_' . $entity_id => $js_template))), 'setting');
       }
     }
 
@@ -1604,7 +1604,7 @@ class flag_flag {
  */
 class flag_broken extends flag_flag {
   function options_form(&$form) {
-    drupal_set_message(t("The module providing this flag wasn't found, or this flag type, %type, isn't valid.", array('%type' => $this->entity_type)), 'error');
+    backdrop_set_message(t("The module providing this flag wasn't found, or this flag type, %type, isn't valid.", array('%type' => $this->entity_type)), 'error');
     $form = array();
   }
 }

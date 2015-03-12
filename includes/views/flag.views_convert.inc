@@ -110,7 +110,7 @@ function flag_views_convert($display, $type, &$view, $field, $id) {
             'exposed' => $type == 'exposed_filter' ? 1 : 0,
           );
           $new_rel = 'flag_content_rel';
-          drupal_set_message(t('Flag is not able to convert the <em>Flagged time</em> filter. It\'s value is currently empty, but needs to be populated to work properly.'), 'warning');
+          backdrop_set_message(t('Flag is not able to convert the <em>Flagged time</em> filter. It\'s value is currently empty, but needs to be populated to work properly.'), 'warning');
           break;
 
         case 'count':

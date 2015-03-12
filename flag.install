@@ -221,7 +221,7 @@ function flag_uninstall() {
     variable_del($row->name);
   }
 
-  drupal_set_message(t('Flag has been uninstalled.'));
+  backdrop_set_message(t('Flag has been uninstalled.'));
 }
 
 /**
@@ -464,7 +464,7 @@ function flag_update_7301() {
   // ...which in fact isn't enough, as the schema cache appears to need explicit
   // clearing to prevent the next updates failing to get the schema for the new
   // table names.
-  drupal_get_schema(NULL, TRUE);
+  backdrop_get_schema(NULL, TRUE);
 }
 
 /**
@@ -687,7 +687,7 @@ function flag_update_7305() {
   // Flags in code will now report as overridden because the roles option is no
   // longer output. Notify the user that they should update them.
   if (count(module_implements('flag_default_flags'))) {
-    drupal_set_message(t('Flags which are defined in code with hook_flag_default_flags() or Features need to be re-exported.'));
+    backdrop_set_message(t('Flags which are defined in code with hook_flag_default_flags() or Features need to be re-exported.'));
   }
 
   // Direct the user to read the change notice, which has more details of how

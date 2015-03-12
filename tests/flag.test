@@ -23,7 +23,7 @@ abstract class FlagTestCaseBase extends DrupalWebTestCase {
     $flag = flag_flag::factory_by_array($flag_data);
     $flag->save();
     // Reset our cache so our permissions show up.
-    drupal_static_reset('flag_get_flags');
+    backdrop_static_reset('flag_get_flags');
 
     // Reset permissions so that permissions for this flag are available.
     $this->checkPermissions(array(), TRUE);
@@ -254,7 +254,7 @@ class FlagAdminTestCase extends FlagTestCaseBase {
     $this->assertFieldByName('show_in_links[teaser]', 'teaser', "The view mode option is set to the node 'teaser' view mode by default.");
 
     $edit = array(
-      'name' => drupal_strtolower($this->randomName()),
+      'name' => backdrop_strtolower($this->randomName()),
       'title' => $this->randomName(),
       'flag_short'          => 'flag short [node:nid]',
       'flag_long'           => 'flag long [node:nid]',
@@ -288,7 +288,7 @@ class FlagAdminTestCase extends FlagTestCaseBase {
 
     $this->drupalPost(FLAG_ADMIN_PATH . '/add/node', $edit, t('Save flag'));
 
-    drupal_static_reset('flag_get_flags');
+    backdrop_static_reset('flag_get_flags');
     $flag = flag_get_flag($edit['name']);
     // Load the roles array for checking it matches.
     $flag->fetch_roles();
@@ -314,7 +314,7 @@ class FlagAdminTestCase extends FlagTestCaseBase {
 
     // Edit the flag through the UI.
     $edit = array(
-      'name' => drupal_strtolower($this->randomName()),
+      'name' => backdrop_strtolower($this->randomName()),
       'title' => $this->randomName(),
       'flag_short'          => 'flag 2 short [node:nid]',
       'flag_long'           => 'flag 2 long [node:nid]',
@@ -348,7 +348,7 @@ class FlagAdminTestCase extends FlagTestCaseBase {
 
     $this->drupalPost(FLAG_ADMIN_PATH . '/manage/' . $flag->name, $edit, t('Save flag'));
 
-    drupal_static_reset('flag_get_flags');
+    backdrop_static_reset('flag_get_flags');
     $flag = flag_get_flag($edit['name']);
     // Load the roles array for checking it matches.
     $flag->fetch_roles();
@@ -362,8 +362,8 @@ class FlagAdminTestCase extends FlagTestCaseBase {
     }
 
     // Clear the user access cache so our changes to permissions are noticed.
-    drupal_static_reset('user_access');
-    drupal_static_reset('user_role_permissions');
+    backdrop_static_reset('user_access');
+    backdrop_static_reset('user_role_permissions');
 
     // Check permissions.
     $permissions = user_role_permissions(user_roles());
@@ -379,7 +379,7 @@ class FlagAdminTestCase extends FlagTestCaseBase {
 
     // Delete the flag through the UI.
     $this->drupalPost(FLAG_ADMIN_PATH . '/manage/' . $flag->name . '/delete', array(), t('Delete'));
-    drupal_static_reset('flag_get_flags');
+    backdrop_static_reset('flag_get_flags');
     $this->assertFalse(flag_get_flag($flag->name), t('Flag successfully deleted.'));
   }
 
@@ -820,7 +820,7 @@ class FlagLinkTypeConfirmTestCase extends DrupalWebTestCase {
     $this->flag = flag_flag::factory_by_array($this->flag_data);
     $this->flag->save();
     // Reset our cache so our permissions show up.
-    drupal_static_reset('flag_get_flags');
+    backdrop_static_reset('flag_get_flags');
 
     // Reset permissions so that permissions for this flag are available.
     $this->checkPermissions(array(), TRUE);
@@ -883,7 +883,7 @@ class FlagLinkTypeConfirmTestCase extends DrupalWebTestCase {
     $this->assertLink($this->flag_data['unflag_short'], 0, 'The unflag link appears once the item has been flagged.');
 
     // Reset the static cache before we get data from it.
-    drupal_static_reset('flag_get_user_flags');
+    backdrop_static_reset('flag_get_user_flags');
     $this->assertTrue($this->flag->is_flagged($this->nid, $this->flag_unflag_user->uid), "The node is recorded as flagged by the user.");
 
     // Click the link to unflag the node.
@@ -903,7 +903,7 @@ class FlagLinkTypeConfirmTestCase extends DrupalWebTestCase {
     $this->assertText($this->flag_data['unflag_message'], 'The unflag message appears once the item has been flagged.');
 
     // Reset the static cache before we get data from it.
-    drupal_static_reset('flag_get_user_flags');
+    backdrop_static_reset('flag_get_user_flags');
     $this->assertFalse($this->flag->is_flagged($this->nid, $this->flag_unflag_user->uid), "The node is recorded as not flagged by the user.");
   }
 

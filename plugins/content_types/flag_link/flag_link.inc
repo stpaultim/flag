@@ -24,7 +24,7 @@ function flag_flag_link_content_type_info($entity_type) {
  * Implements hook_PLUGIN_content_type_content_types().
  */
 function flag_flag_link_content_type_content_types() {
-  $types = &drupal_static(__FUNCTION__);
+  $types = &backdrop_static(__FUNCTION__);
   if (isset($types)) {
     return $types;
   }

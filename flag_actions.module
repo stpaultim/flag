@@ -35,7 +35,7 @@ function flag_actions_menu() {
   );
   $items[FLAG_ADMIN_PATH . '/actions/add'] = array(
     'title' => 'Add action',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('flag_actions_form', NULL, 5),
     'access callback' => 'user_access',
     'access arguments' => array('administer actions'),
@@ -43,7 +43,7 @@ function flag_actions_menu() {
   );
   $items[FLAG_ADMIN_PATH . '/actions/delete'] = array(
     'title' => 'Delete action',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('flag_actions_delete_form', 5),
     'access callback' => 'user_access',
     'access arguments' => array('administer actions'),
@@ -51,7 +51,7 @@ function flag_actions_menu() {
   );
   $items[FLAG_ADMIN_PATH . '/actions/configure'] = array(
     'title' => 'Edit action',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('flag_actions_form', 5),
     'access callback' => 'user_access',
     'access arguments' => array('administer actions'),
@@ -84,7 +84,7 @@ function flag_actions_get_action($aid) {
 }
 
 function flag_actions_get_actions($flag_name = NULL, $reset = FALSE) {
-  $flag_actions = &drupal_static(__FUNCTION__);
+  $flag_actions = &backdrop_static(__FUNCTION__);
   module_load_include('inc', 'flag', 'includes/flag.actions');
 
   // Get a list of all possible actions defined by modules.
@@ -274,7 +274,7 @@ function flag_actions_do($event, $flag, $entity_id, $account) {
  */
 function flag_actions_page() {
   $actions = flag_actions_get_actions();
-  $add_action_form = drupal_get_form('flag_actions_add_form');
+  $add_action_form = backdrop_get_form('flag_actions_add_form');
 
   return theme('flag_actions_page', array('actions' => $actions, 'form' => $add_action_form));
 }
@@ -334,7 +334,7 @@ function theme_flag_actions_page($variables) {
 
   $output = '';
   $output .= theme('table', array('header' => $header, 'rows' => $rows));
-  $output .= drupal_render($add_action_form);
+  $output .= backdrop_render($add_action_form);
   return $output;
 }
 
@@ -379,13 +379,13 @@ function theme_flag_actions_add_form($variables) {
   $fieldset = array(
     '#type' => 'fieldset',
     '#title' => t('Add a new flag action'),
-    '#children' => '<div class="container-inline">' . drupal_render($form['flag']) . drupal_render($form['submit']) . '</div>',
+    '#children' => '<div class="container-inline">' . backdrop_render($form['flag']) . backdrop_render($form['submit']) . '</div>',
     '#parents' => array('add_action'),
     '#attributes' => array(),
     '#groups' => array('add_action' => array()),
   );
 
-  return drupal_render($fieldset) . drupal_render_children($form);
+  return backdrop_render($fieldset) . backdrop_render_children($form);
 }
 
 /**
@@ -409,14 +409,14 @@ function flag_actions_form($form, &$form_state, $aid = NULL, $flag_name = NULL) 
     $action = flag_actions_get_action($aid);
     $callback = $action->callback;
     $flag = flag_get_flag($action->flag);
-    drupal_set_title(t('Edit the "@action" action for the @title flag', array('@action' => $action->label, '@title' => $flag->get_title())));
+    backdrop_set_title(t('Edit the "@action" action for the @title flag', array('@action' => $action->label, '@title' => $flag->get_title())));
   }
   elseif (isset($flag_name)) {
     $flag = flag_get_flag($flag_name);
   }
 
   if (empty($flag)) {
-    drupal_not_found();
+    backdrop_not_found();
   }
 
   $form['new'] = array(
@@ -425,7 +425,7 @@ function flag_actions_form($form, &$form_state, $aid = NULL, $flag_name = NULL) 
   );
 
   if (!isset($callback)) {
-    drupal_set_title(t('Add an action to the @title flag', array('@title' => $flag->get_title())));
+    backdrop_set_title(t('Add an action to the @title flag', array('@title' => $flag->get_title())));
 
     $actions = $flag->get_valid_actions();
     $options = array();
@@ -453,7 +453,7 @@ function flag_actions_form($form, &$form_state, $aid = NULL, $flag_name = NULL) 
     $action->event = 'flag';
     $action->threshold = 10;
     $action->repeat_threshold = 0;
-    drupal_set_title(t('Add "@action" action to the @title flag', array('@action' => $action->label, '@title' => $flag->get_title())));
+    backdrop_set_title(t('Add "@action" action to the @title flag', array('@action' => $action->label, '@title' => $flag->get_title())));
   }
 
   $form['flag'] = array(
@@ -594,16 +594,16 @@ function flag_actions_form_submit($form, &$form_state) {
 
   $action = flag_actions_get_action($aid);
 
-  drupal_set_message(t('The "@action" action for the @title flag has been saved.', array('@action' => $action->label, '@title' => $flag->get_title())));
+  backdrop_set_message(t('The "@action" action for the @title flag has been saved.', array('@action' => $action->label, '@title' => $flag->get_title())));
   $form_state['redirect'] = FLAG_ADMIN_PATH . '/actions';
 }
 
 function theme_flag_actions_flag_form($variables) {
   $form = $variables['form'];
 
-  $event = drupal_render($form['event']);
-  $threshold = drupal_render($form['threshold']);
-  $repeat_threshold = drupal_render($form['repeat_threshold']);
+  $event = backdrop_render($form['event']);
+  $threshold = backdrop_render($form['threshold']);
+  $repeat_threshold = backdrop_render($form['repeat_threshold']);
   $action = $form['#action']->label;
 
   $output  = '';
@@ -624,7 +624,7 @@ function theme_flag_actions_flag_form($variables) {
     '#required' => TRUE,
   );
 
-  return $output . drupal_render_children($form);
+  return $output . backdrop_render_children($form);
 }
 
 function flag_actions_delete_form($form, &$form_state, $aid) {
@@ -649,7 +649,7 @@ function flag_actions_delete_form($form, &$form_state, $aid) {
 
 function flag_actions_delete_form_submit(&$form, &$form_state) {
   flag_actions_delete_action($form_state['values']['action']->aid);
-  drupal_set_message(t('The "@action" action for the @title flag has been deleted.', array('@action' => $form_state['values']['action']->label, '@title' => $form_state['values']['flag']->get_title())));
+  backdrop_set_message(t('The "@action" action for the @title flag has been deleted.', array('@action' => $form_state['values']['action']->label, '@title' => $form_state['values']['flag']->get_title())));
   $form_state['redirect'] = FLAG_ADMIN_PATH . '/actions';
 }
 
