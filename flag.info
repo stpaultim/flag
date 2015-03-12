@@ -1,6 +1,6 @@
 name = Flag
 description = Create customized flags that users can set on entities.
-core = 7.x
+backdrop = 1.x
 package = Flags
 configure = admin/structure/flags
 

@@ -2,5 +2,5 @@ name = Flag Hooks Test
 description = Test module for invocation of flag hooks.
 dependencies[] = flag
 dependencies[] = rules
-core = 7.x
+backdrop = 1.x
 hidden = TRUE
