@@ -11,7 +11,7 @@
 /**
  * The main behavior to perform AJAX toggling of links.
  */
-Drupal.flagLink = function(context) {
+Backdrop.flagLink = function(context) {
   /**
    * Helper function. Updates a link's HTML with a new one.
    *
@@ -35,7 +35,7 @@ Drupal.flagLink = function(context) {
     var $wrapper = $(element).parents('.flag-wrapper:first');
     // Replace the old link with the new one.
     $wrapper.after($newLink).remove();
-    Drupal.attachBehaviors($newLink.get(0));
+    Backdrop.attachBehaviors($newLink.get(0));
 
     $('.flag-message', $newLink).fadeIn();
     setTimeout(function(){ $('.flag-message.flag-auto-remove', $newLink).fadeOut() }, 3000);
@@ -89,7 +89,7 @@ Drupal.flagLink = function(context) {
 
         // Finally, update the page.
         $wrappers = $newLink.replaceAll($wrappers);
-        Drupal.attachBehaviors($wrappers.parent());
+        Backdrop.attachBehaviors($wrappers.parent());
 
         $.event.trigger('flagGlobalAfterLinkUpdate', [data]);
       },
@@ -106,7 +106,7 @@ Drupal.flagLink = function(context) {
 /**
  * Prevent anonymous flagging unless the user has JavaScript enabled.
  */
-Drupal.flagAnonymousLinks = function(context) {
+Backdrop.flagAnonymousLinks = function(context) {
   $('a.flag:not(.flag-anonymous-processed)', context).each(function() {
     this.href += (this.href.match(/\?/) ? '&' : '?') + 'has_js=1';
     $(this).addClass('flag-anonymous-processed');
@@ -120,13 +120,13 @@ String.prototype.flagNameToCSS = function() {
 /**
  * A behavior specifically for anonymous users. Update links to the proper state.
  */
-Drupal.flagAnonymousLinkTemplates = function(context) {
+Backdrop.flagAnonymousLinkTemplates = function(context) {
   // Swap in current links. Cookies are set by PHP's setcookie() upon flagging.
 
-  var templates = Drupal.settings.flag.templates;
+  var templates = Backdrop.settings.flag.templates;
 
   // Build a list of user-flags.
-  var userFlags = Drupal.flagCookie('flags');
+  var userFlags = Backdrop.flagCookie('flags');
   if (userFlags) {
     userFlags = userFlags.split('+');
     for (var n in userFlags) {
@@ -169,7 +169,7 @@ Drupal.flagAnonymousLinkTemplates = function(context) {
  * Note this is a direct copy of the jQuery cookie library.
  * Written by Klaus Hartl.
  */
-Drupal.flagCookie = function(name, value, options) {
+Backdrop.flagCookie = function(name, value, options) {
   if (typeof value != 'undefined') { // name and value given, set cookie
     options = options || {};
     if (value === null) {
@@ -212,22 +212,22 @@ Drupal.flagCookie = function(name, value, options) {
   }
 };
 
-Drupal.behaviors.flagLink = {};
-Drupal.behaviors.flagLink.attach = function(context) {
+Backdrop.behaviors.flagLink = {};
+Backdrop.behaviors.flagLink.attach = function(context) {
   // For anonymous users with the page cache enabled, swap out links with their
   // current state for the user.
-  if (Drupal.settings.flag && Drupal.settings.flag.templates) {
-    Drupal.flagAnonymousLinkTemplates(context);
+  if (Backdrop.settings.flag && Backdrop.settings.flag.templates) {
+    Backdrop.flagAnonymousLinkTemplates(context);
   }
 
   // For all anonymous users, require JavaScript for flagging to prevent spiders
   // from flagging things inadvertently.
-  if (Drupal.settings.flag && Drupal.settings.flag.anonymous) {
-    Drupal.flagAnonymousLinks(context);
+  if (Backdrop.settings.flag && Backdrop.settings.flag.anonymous) {
+    Backdrop.flagAnonymousLinks(context);
   }
 
   // On load, bind the click behavior for all links on the page.
-  Drupal.flagLink(context);
+  Backdrop.flagLink(context);
 };
 
 })(jQuery);

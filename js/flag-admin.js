@@ -3,8 +3,8 @@
 /**
  * Behavior to disable the "unflag" option if "flag" is not available.
  */
-Drupal.behaviors.flagRoles = {};
-Drupal.behaviors.flagRoles.attach = function(context) {
+Backdrop.behaviors.flagRoles = {};
+Backdrop.behaviors.flagRoles.attach = function(context) {
   $('#flag-roles input.flag-access', context).change(function() {
     var unflagCheckbox = $(this).parents('tr:first').find('input.unflag-access').get(0);
     if (this.checked) {
@@ -43,10 +43,10 @@ Drupal.behaviors.flagRoles.attach = function(context) {
 /**
  * Vertical tabs integration.
  */
-Drupal.behaviors.flagSummary = {};
+Backdrop.behaviors.flagSummary = {};
 
-Drupal.behaviors.flagSummary.attach = function (context) {
-  $('fieldset.flag-fieldset', context).drupalSetSummary(function(context) {
+Backdrop.behaviors.flagSummary.attach = function (context) {
+  $('fieldset.flag-fieldset', context).backdropSetSummary(function(context) {
     var flags = [];
     $('input:checkbox:checked', context).each(function() {
       flags.push(this.title);
@@ -56,7 +56,7 @@ Drupal.behaviors.flagSummary.attach = function (context) {
       return flags.join(', ');
     }
     else {
-      return Drupal.t('No flags');
+      return Backdrop.t('No flags');
     }
   });
 };
