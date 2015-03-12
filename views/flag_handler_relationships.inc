@@ -170,7 +170,7 @@ class flag_handler_relationship_content extends flag_handler_relationship {
         'numeric' => TRUE,
       );
       $flag_roles = user_roles(FALSE, "flag $flag->name");
-      if (isset($flag_roles[DRUPAL_ANONYMOUS_RID])) {
+      if (isset($flag_roles[BACKDROP_ANONYMOUS_ROLE])) {
         // Disable page caching for anonymous users.
         backdrop_page_is_cacheable(FALSE);
 

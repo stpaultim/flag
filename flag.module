@@ -648,8 +648,8 @@ function flag_form_user_admin_permissions_alter(&$form, &$form_state, $form_id) 
     $flags = flag_get_flags();
     // Disable flag and unflag permission checkboxes for anonymous users.
     foreach ($flags as $flag_name => $flag) {
-      $form['checkboxes'][DRUPAL_ANONYMOUS_RID]["flag $flag_name"]['#disabled'] = TRUE;
-      $form['checkboxes'][DRUPAL_ANONYMOUS_RID]["unflag $flag_name"]['#disabled'] = TRUE;
+      $form['checkboxes'][BACKDROP_ANONYMOUS_ROLE]["flag $flag_name"]['#disabled'] = TRUE;
+      $form['checkboxes'][BACKDROP_ANONYMOUS_ROLE]["unflag $flag_name"]['#disabled'] = TRUE;
     }
   }
 }

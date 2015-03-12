@@ -445,8 +445,8 @@ function flag_form($form, &$form_state, $flag) {
   else {
     // For new flags, provide a reasonable default value.
     $flag->roles = array(
-      'flag' => array(DRUPAL_AUTHENTICATED_RID),
-      'unflag' => array(DRUPAL_AUTHENTICATED_RID),
+      'flag' => array(BACKDROP_AUTHENTICATED_ROLE),
+      'unflag' => array(BACKDROP_AUTHENTICATED_ROLE),
     );
   }
 

@@ -48,7 +48,7 @@ function flag_bookmark_enable() {
 
     // Grant permissions.
     $permissions = array('flag bookmarks', 'unflag bookmarks');
-    user_role_grant_permissions(DRUPAL_AUTHENTICATED_RID, $permissions);
+    user_role_grant_permissions(BACKDROP_AUTHENTICATED_ROLE, $permissions);
   }
 }
 
