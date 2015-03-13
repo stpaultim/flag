@@ -635,6 +635,16 @@ function flag_permission() {
     ),
   );
 
+  // NOTE: on uninstall, user_modules_uninstalled() calls hook_permission()
+  // after flag module has been uninstalled.  Once the module schema and
+  // config are removed, we can't know what permissions flag module may have
+  // been provided, so we'll just return the gloabl permissions only for now.
+  // One possible fix would be a new pre-uninstall hook to give user module
+  // a chance to do its cleanup before Backdrop uninstalls the module.
+  if (!module_exists('flag')) {
+    return $permissions;
+  }
+
   // Reset static cache to ensure all flag permissions are available.
   backdrop_static_reset('flag_get_flags');
   $flags = flag_get_flags();
