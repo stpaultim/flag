@@ -10,7 +10,16 @@ define('FLAG_API_VERSION', 3);
 define('FLAG_ADMIN_PATH', 'admin/structure/flags');
 define('FLAG_ADMIN_PATH_START', 3);
 
-
+/**
+ * Implements hook_config_info().
+ */
+function flag_config_info() {
+  $prefixes['flag.settings'] = array(
+    'label' => t('Flag settings'),
+    'group' => t('Default'),
+  );
+  return $prefixes;
+}
 
 /**
  * Implements hook_autoload_info().
@@ -732,7 +741,7 @@ function flag_form_node_type_form_alter(&$form, &$form_state, $form_id) {
       $form['workflow']['flag'][$var] = array(
         '#type' => 'checkbox',
         '#title' => $flag->get_label('flag_short', 'fake'),
-        '#default_value' => variable_get($var . '_' . $form['#node_type']->type, 0),
+        '#default_value' => config_get('flag.settings', $var . '_' . $form['#node_type']->type),
         '#return_value' => 1,
       );
     }
@@ -793,7 +802,7 @@ function flag_field_attach_form($entity_type, $entity, &$form, &$form_state, $la
       // Apply the per-bundle defaults for nodes.
       if ($entity_type == 'node') {
         $node_type = $entity->type;
-        $flag_status = variable_get('flag_' . $flag->name . '_default_' . $node_type, 0);
+        $flag_status = config_get('flag.settings', 'flag_' . $flag->name . '_default_' . $node_type);
       }
 
       // For a new, unsaved entity, make a dummy entity ID so that the flag
@@ -2011,7 +2020,7 @@ function _flag_compare_weight($flag1, $flag2) {
  */
 function flag_get_default_flags($include_disabled = FALSE) {
   $default_flags = array();
-  $flag_status = variable_get('flag_default_flag_status', array());
+  $flag_status = config_get('flag.settings', 'flag_default_flag_status');
 
   $default_flags_info = array();
   foreach (module_implements('flag_default_flags') as $module) {

@@ -81,7 +81,8 @@ class FlagGlobalCookieStorage extends FlagCookieStorage {
 
   // Global flags persist for the length of the minimum cache lifetime.
   protected function get_lifetime() {
-    $cookie_lifetime = variable_get('cache', 0) ? variable_get('cache_lifetime', 0) : -1;
+    $config = config('system.core');
+    $cookie_lifetime = $config->get('cache') ? $config->get('cache_lifetime') : -1;
     // Do not let the cookie lifetime be 0 (which is the no cache limit on
     // anonymous page caching), since it would expire immediately. Usually
     // the no cache limit means caches are cleared on cron, which usually runs

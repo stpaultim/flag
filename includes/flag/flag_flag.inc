@@ -665,7 +665,7 @@ class flag_flag {
    */
   function uses_anonymous_cookies() {
     global $user;
-    return $user->uid == 0 && variable_get('cache', 0);
+    return $user->uid == 0 && config_get('system.core', 'cache');
   }
 
   /**
@@ -1484,9 +1484,14 @@ class flag_flag {
    */
   function disable() {
     if (isset($this->module)) {
-      $flag_status = variable_get('flag_default_flag_status', array());
+      $config = config('flag.settings');
+      $flag_status = $config->get('flag_default_flag_status');
+      if (!is_array($flag_status)) {
+        $flag_status = array();
+      }
       $flag_status[$this->name] = FALSE;
-      variable_set('flag_default_flag_status', $flag_status);
+      $config->set('flag_default_flag_status', $flag_status);
+      $config->save();
     }
   }
 
@@ -1495,9 +1500,14 @@ class flag_flag {
    */
   function enable() {
     if (isset($this->module)) {
-      $flag_status = variable_get('flag_default_flag_status', array());
+      $config = config('flag.settings');
+      $flag_status = $config->get('flag_default_flag_status');
+      if (!is_array($flag_status)) {
+        $flag_status = array();
+      }
       $flag_status[$this->name] = TRUE;
-      variable_set('flag_default_flag_status', $flag_status);
+      $config->set('flag_default_flag_status', $flag_status);
+      $config->save();
     }
   }
 
