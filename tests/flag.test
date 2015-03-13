@@ -39,17 +39,6 @@ abstract class FlagTestCaseBase extends BackdropWebTestCase {
 class FlagFlaggingCRUDTestCase extends FlagTestCaseBase {
 
   /**
-   * Implements getInfo().
-   */
-  public static function getInfo() {
-    return array(
-      'name' => 'CRUD API',
-      'description' => 'Basic CRUD operations on flagging entities.',
-      'group' => 'Flag',
-    );
-  }
-
-  /**
    * Implements setUp().
    */
   function setUp() {
@@ -211,17 +200,6 @@ class FlagFlaggingCRUDTestCase extends FlagTestCaseBase {
  */
 class FlagAdminTestCase extends FlagTestCaseBase {
   public $_flag = FALSE;
-
-  /**
-   * Implements getInfo().
-   */
-  public static function getInfo() {
-    return array(
-      'name' => 'Admin UI',
-      'description' => 'Add, edit and delete flags.',
-      'group' => 'Flag',
-    );
-  }
 
   /**
    * Implements setUp().
@@ -391,17 +369,6 @@ class FlagAdminTestCase extends FlagTestCaseBase {
 class FlagAccessFormTestCase extends FlagTestCaseBase {
 
   /**
-   * Implements getInfo().
-   */
-  public static function getInfo() {
-    return array(
-      'name' => 'Access to flags via entity forms',
-      'description' => 'Access to flag and unflag entities via entity forms.',
-      'group' => 'Flag',
-    );
-  }
-
-  /**
    * Implements setUp().
    */
   function setUp() {
@@ -485,17 +452,6 @@ class FlagAccessFormTestCase extends FlagTestCaseBase {
  * Tokens we provide on generic entities.
  */
 class FlagEntityTokensTestCase extends FlagTestCaseBase {
-
-  /**
-   * Implements getInfo().
-   */
-  public static function getInfo() {
-    return array(
-      'name' => 'Entity tokens',
-      'description' => 'Tokens for flag count on entities.',
-      'group' => 'Flag',
-    );
-  }
 
   /**
    * Implements setUp().
@@ -641,17 +597,6 @@ class FlagEntityTokensTestCase extends FlagTestCaseBase {
 class FlagAccessLinkTestCase extends FlagTestCaseBase {
 
   /**
-   * Implements getInfo().
-   */
-  public static function getInfo() {
-    return array(
-      'name' => 'Access to flags via basic link',
-      'description' => 'Access to flag and unflag entities using the basic link.',
-      'group' => 'Flag',
-    );
-  }
-
-  /**
    * Implements setUp().
    */
   function setUp() {
@@ -763,17 +708,6 @@ class FlagAccessLinkTestCase extends FlagTestCaseBase {
  * Test the 'confirm form' link type.
  */
 class FlagLinkTypeConfirmTestCase extends BackdropWebTestCase {
-
-  /**
-   * Implements getInfo().
-   */
-  public static function getInfo() {
-    return array(
-      'name' => 'Confirm form',
-      'description' => 'Flag confirm form link type.',
-      'group' => 'Flag',
-    );
-  }
 
   /**
    * Implements setUp().
@@ -906,17 +840,6 @@ class FlagLinkTypeConfirmTestCase extends BackdropWebTestCase {
  * Verifies the implementation of hook_flag_access().
  */
 class FlagHookFlagAccessTestCase extends FlagTestCaseBase {
-
-  /**
-   * Implements getInfo().
-   */
-  public static function getInfo() {
-    return array(
-      'name' => 'hook_flag_access()',
-      'description' => 'Checks the ability of modules to use hook_flag_access().',
-      'group' => 'Flag',
-    );
-  }
 
   /**
    * Implements setUp().
@@ -1065,17 +988,6 @@ class FlagHookFlagAccessTestCase extends FlagTestCaseBase {
 class FlagFlaggingFieldTestCase extends FlagTestCaseBase {
 
   /**
-   * Implements getInfo().
-   */
-  public static function getInfo() {
-    return array(
-      'name' => 'Flagging fields',
-      'description' => 'Fields on Flagging entities.',
-      'group' => 'Flag',
-    );
-  }
-
-  /**
    * Implements setUp().
    */
   function setUp() {
@@ -1140,17 +1052,6 @@ class FlagFlaggingFieldTestCase extends FlagTestCaseBase {
  * Test use of EntityFieldQueries with flagging entities.
  */
 class FlagEntityFieldQueryTestCase extends FlagTestCaseBase {
-
-  /**
-   * Implements getInfo().
-   */
-  public static function getInfo() {
-    return array(
-      'name' => 'Entity Field Query',
-      'description' => 'Entity Field Query for flagging entities.',
-      'group' => 'Flag',
-    );
-  }
 
   /**
    * Implements setUp().
@@ -1245,17 +1146,6 @@ class FlagEntityFieldQueryTestCase extends FlagTestCaseBase {
  * Verifies the invocation of hooks when performing flagging and unflagging.
  */
 class FlagHookInvocationsTestCase extends FlagTestCaseBase {
-
-  /**
-   * Implements getInfo().
-   */
-  public static function getInfo() {
-    return array(
-      'name' => 'Hook invocations',
-      'description' => 'Invocation of flag and entity hooks and rules during flagging and unflagging.',
-      'group' => 'Flag',
-    );
-  }
 
   /**
    * Implements setUp().
