@@ -51,18 +51,6 @@ function flag_autoload_info() {
     'flag_handler_argument_entity_id'            => 'views/flag_handler_argument_entity_id.inc',
     'flag_handler_field_flagged'                 => 'views/flag_handler_field_flagged.inc',
     'flag_handler_filter_flagged'                => 'views/flag_handler_filter_flagged.inc',
-
-    // tests
-    'FlagFlaggingCRUDTestCase'                   => 'tests/flag.test',
-    'FlagAdminTestCase'                          => 'tests/flag.test',
-    'FlagAccessFormTestCase'                     => 'tests/flag.test',
-    'FlagEntityTokensTestCase'                   => 'tests/flag.test',
-    'FlagAccessLinkTestCase'                     => 'tests/flag.test',
-    'FlagLinkTypeConfirmTestCase'                => 'tests/flag.test',
-    'FlagHookFlagAccessTestCase'                 => 'tests/flag.test',
-    'FlagFlaggingFieldTestCase'                  => 'tests/flag.test',
-    'FlagEntityFieldQueryTestCase'               => 'tests/flag.test',
-    'FlagHookInvocationsTestCase'                => 'tests/flag.test',
   );
 }
 

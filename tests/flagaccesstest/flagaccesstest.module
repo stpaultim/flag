@@ -8,7 +8,10 @@
  * Implements hook_flag_access.
  */
 function flagaccesstest_flag_access($flag, $entity_id, $action, $account) {
-  $mode = variable_get('FlagHookFlagAccessTestCaseMode', 'ignore');
+  $mode = config_get('flag.settings', 'FlagHookFlagAccessTestCaseMode');
+  if (is_null($mode)) {
+    $mode = 'ignore';
+  }
 
   switch ($mode) {
     case 'ignore':

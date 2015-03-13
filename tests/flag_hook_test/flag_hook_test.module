@@ -20,7 +20,7 @@
  *  variable for verification by the test case.
  */
 function _flag_hook_test_record_invocation($hook_name, $function_parameters, $flagging = NULL) {
-  $variable = variable_get('flag_hook_test_hook_tracking', array());
+  $variable = config_get('flag.settings', 'flag_hook_test_hook_tracking');
 
   $variable[$hook_name] = array();
   $variable[$hook_name]['parameters'] = $function_parameters;
@@ -46,7 +46,7 @@ function _flag_hook_test_record_invocation($hook_name, $function_parameters, $fl
     $variable[$hook_name]['api_calls']['flag_get_user_flag_counts'] = flag_get_user_flag_counts($flag, $account);
   }
 
-  variable_set('flag_hook_test_hook_tracking', $variable);
+  config_set('flag.settings', 'flag_hook_test_hook_tracking', $variable);
 }
 
 /**

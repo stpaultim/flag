@@ -12,7 +12,7 @@
 /**
  * Controller class for flaggings.
  */
-class FlaggingController extends DrupalDefaultEntityController {
+class FlaggingController extends DefaultEntityController {
 
   protected function buildQuery($ids, $conditions = array(), $revision_id = FALSE) {
     $query = parent::buildQuery($ids, $conditions, $revision_id);

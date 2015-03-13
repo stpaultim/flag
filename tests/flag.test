@@ -8,7 +8,7 @@
 /**
  * Base class for our tests with common methods.
  */
-abstract class FlagTestCaseBase extends DrupalWebTestCase {
+abstract class FlagTestCaseBase extends BackdropWebTestCase {
 
   /**
    * Helper to create a flag from an array of data and clear caches etc.
@@ -85,8 +85,8 @@ class FlagFlaggingCRUDTestCase extends FlagTestCaseBase {
     $this->flag = $this->createFlag($flag_data);
 
     // Create test user who can flag and unflag.
-    $this->flag_unflag_user = $this->drupalCreateUser(array('flag test_flag', 'unflag test_flag'));
-    $this->drupalLogin($this->flag_unflag_user);
+    $this->flag_unflag_user = $this->backdropCreateUser(array('flag test_flag', 'unflag test_flag'));
+    $this->backdropLogin($this->flag_unflag_user);
   }
 
   /**
@@ -95,15 +95,13 @@ class FlagFlaggingCRUDTestCase extends FlagTestCaseBase {
   function testFlaggingCreate() {
     // Create an article node that we try to create a flagging entity for.
     $title = $this->randomName(8);
-    $node = array(
+    $node =  $this->backdropCreateNode(array(
       'title' => $title,
       'body' => array(LANGUAGE_NONE => array(array('value' => $this->randomName(32)))),
       'uid' => 1,
       'type' => 'article',
       'is_new' => TRUE,
-    );
-    $node = node_submit((object) $node);
-    node_save($node);
+    ));
 
     // Create a flagging entity and save it.
     $flagging = array(
@@ -140,18 +138,16 @@ class FlagFlaggingCRUDTestCase extends FlagTestCaseBase {
   function testFlaggingCreateException() {
     // Create an article node that we try to create a flagging entity for.
     $title = $this->randomName(8);
-    $node = array(
+    $node =  $this->backdropCreateNode(array(
       'title' => $title,
       'body' => array(LANGUAGE_NONE => array(array('value' => $this->randomName(32)))),
       'uid' => 1,
       'type' => 'article',
       'is_new' => TRUE,
-    );
-    $node = node_submit((object) $node);
-    node_save($node);
+    ));
 
     // Create test user who can't use this flag.
-    $no_flag_user = $this->drupalCreateUser(array());
+    $no_flag_user = $this->backdropCreateUser(array());
 
     // Create a flagging entity with that tries to perform an flagging action
     // that is not permitted.
@@ -178,15 +174,13 @@ class FlagFlaggingCRUDTestCase extends FlagTestCaseBase {
   function testFlaggingUpdate() {
     // Create an article node that we try to create a flagging entity for.
     $title = $this->randomName(8);
-    $node = array(
+    $node =  $this->backdropCreateNode(array(
       'title' => $title,
       'body' => array(LANGUAGE_NONE => array(array('value' => $this->randomName(32)))),
       'uid' => 1,
       'type' => 'article',
       'is_new' => TRUE,
-    );
-    $node = node_submit((object) $node);
-    node_save($node);
+    ));
 
     // Flag the node as the user.
     $flag = flag_get_flag('test_flag');
@@ -236,8 +230,8 @@ class FlagAdminTestCase extends FlagTestCaseBase {
     parent::setUp('flag');
 
     // Create and login user.
-    $admin_user = $this->drupalCreateUser(array('access administration pages', 'administer flags'));
-    $this->drupalLogin($admin_user);
+    $admin_user = $this->backdropCreateUser(array('access administration pages', 'administer flags'));
+    $this->backdropLogin($admin_user);
   }
 
   /**
@@ -245,7 +239,7 @@ class FlagAdminTestCase extends FlagTestCaseBase {
    */
   function testFlagAdmin() {
     // Add a new flag using the UI.
-    $this->drupalGet(FLAG_ADMIN_PATH . '/add/node');
+    $this->backdropGet(FLAG_ADMIN_PATH . '/add/node');
 
     // Check the form has the expected defaults.
     $this->assertFieldByName('flag_short', 'Flag this item', "The flag message default value shows in the form.");
@@ -262,8 +256,8 @@ class FlagAdminTestCase extends FlagTestCaseBase {
       'unflag_short'        => 'unflag short [node:nid]',
       'unflag_long'         => 'unflag long [node:nid]',
       'unflag_message'      => 'unflag message [node:nid]',
-      'roles[flag][2]' => TRUE,
-      'roles[unflag][2]' => TRUE,
+      'roles[flag][BACKDROP_AUTHENTICATED_ROLE]' => 'BACKDROP_AUTHENTICATED_ROLE',
+      'roles[unflag][BACKDROP_AUTHENTICATED_ROLE]' => 'BACKDROP_AUTHENTICATED_ROLE',
       'types[article]' => FALSE,
       'types[page]' => TRUE,
       'show_in_links[full]' => FALSE,
@@ -275,7 +269,10 @@ class FlagAdminTestCase extends FlagTestCaseBase {
       'link_type' => 'toggle',
     );
     $saved = $edit;
-    $saved['roles'] = array('flag' => array(2), 'unflag' => array(2));
+    $saved['roles'] = array(
+      'flag' => array(BACKDROP_AUTHENTICATED_ROLE=>BACKDROP_AUTHENTICATED_ROLE),
+      'unflag' => array(BACKDROP_AUTHENTICATED_ROLE=>BACKDROP_AUTHENTICATED_ROLE)
+    );
     $saved['types'] = array('page');
     $saved['show_in_links'] = array(
       'full' => 0,
@@ -284,17 +281,18 @@ class FlagAdminTestCase extends FlagTestCaseBase {
       'search_index' => 0,
       'search_result' => 0,
     );
-    unset($saved['roles[flag][2]'], $saved['roles[unflag][2]'], $saved['types[article]'], $saved['types[page]'], $saved['show_in_links[full]'], $saved['show_in_links[teaser]'], $saved['show_in_links[rss]'], $saved['show_in_links[search_index]'], $saved['show_in_links[search_result]']);
+    unset($saved['roles[flag][BACKDROP_AUTHENTICATED_ROLE]'], $saved['roles[unflag][BACKDROP_AUTHENTICATED_ROLE]'], $saved['types[article]'], $saved['types[page]'], $saved['show_in_links[full]'], $saved['show_in_links[teaser]'], $saved['show_in_links[rss]'], $saved['show_in_links[search_index]'], $saved['show_in_links[search_result]']);
 
-    $this->drupalPost(FLAG_ADMIN_PATH . '/add/node', $edit, t('Save flag'));
+    $this->backdropPost(FLAG_ADMIN_PATH . '/add/node', $edit, t('Save flag'));
 
     backdrop_static_reset('flag_get_flags');
     $flag = flag_get_flag($edit['name']);
-    // Load the roles array for checking it matches.
-    $flag->fetch_roles();
 
     // Check that the flag object is in the database.
     $this->assertTrue($flag != FALSE, t('Flag object found in database'));
+
+    // Load the roles array for checking it matches.
+    $flag->fetch_roles();
 
     // Check each individual property of the flag and make sure it was set.
     foreach ($saved as $property => $value) {
@@ -322,8 +320,8 @@ class FlagAdminTestCase extends FlagTestCaseBase {
       'unflag_short'        => 'unflag 2 short [node:nid]',
       'unflag_long'         => 'unflag 2 long [node:nid]',
       'unflag_message'      => 'unflag 2 message [node:nid]',
-      'roles[flag][2]' => TRUE,
-      'roles[unflag][2]' => TRUE,
+      'roles[flag][BACKDROP_AUTHENTICATED_ROLE]' => 'BACKDROP_AUTHENTICATED_ROLE',
+      'roles[unflag][BACKDROP_AUTHENTICATED_ROLE]' => 'BACKDROP_AUTHENTICATED_ROLE',
       'types[article]' => TRUE,
       'types[page]' => FALSE,
       'show_in_links[full]' => TRUE,
@@ -335,7 +333,7 @@ class FlagAdminTestCase extends FlagTestCaseBase {
       'link_type' => 'normal',
     );
     $saved = $edit;
-    $saved['roles'] = array('flag' => array(2), 'unflag' => array(2));
+    $saved['roles'] = array('flag' => array(BACKDROP_AUTHENTICATED_ROLE), 'unflag' => array(BACKDROP_AUTHENTICATED_ROLE));
     $saved['types'] = array('article');
     $saved['show_in_links'] = array(
       'full' => TRUE,
@@ -344,9 +342,9 @@ class FlagAdminTestCase extends FlagTestCaseBase {
       'search_index' => 0,
       'search_result' => 0,
     );
-    unset($saved['roles[flag][2]'], $saved['roles[unflag][2]'], $saved['types[article]'], $saved['types[page]'], $saved['show_in_links[full]'], $saved['show_in_links[teaser]'], $saved['show_in_links[rss]'], $saved['show_in_links[search_index]'], $saved['show_in_links[search_result]']);
+    unset($saved['roles[flag][BACKDROP_AUTHENTICATED_ROLE]'], $saved['roles[unflag][BACKDROP_AUTHENTICATED_ROLE]'], $saved['types[article]'], $saved['types[page]'], $saved['show_in_links[full]'], $saved['show_in_links[teaser]'], $saved['show_in_links[rss]'], $saved['show_in_links[search_index]'], $saved['show_in_links[search_result]']);
 
-    $this->drupalPost(FLAG_ADMIN_PATH . '/manage/' . $flag->name, $edit, t('Save flag'));
+    $this->backdropPost(FLAG_ADMIN_PATH . '/manage/' . $flag->name, $edit, t('Save flag'));
 
     backdrop_static_reset('flag_get_flags');
     $flag = flag_get_flag($edit['name']);
@@ -378,7 +376,7 @@ class FlagAdminTestCase extends FlagTestCaseBase {
     }
 
     // Delete the flag through the UI.
-    $this->drupalPost(FLAG_ADMIN_PATH . '/manage/' . $flag->name . '/delete', array(), t('Delete'));
+    $this->backdropPost(FLAG_ADMIN_PATH . '/manage/' . $flag->name . '/delete', array(), t('Delete'));
     backdrop_static_reset('flag_get_flags');
     $this->assertFalse(flag_get_flag($flag->name), t('Flag successfully deleted.'));
   }
@@ -446,10 +444,10 @@ class FlagAccessFormTestCase extends FlagTestCaseBase {
     $flag = $this->createFlag($flag_data);
 
     // Create test user who can't us this flag, but can create nodes.
-    $no_flag_user = $this->drupalCreateUser(array('create article content'));
-    $this->drupalLogin($no_flag_user);
+    $no_flag_user = $this->backdropCreateUser(array('create article content'));
+    $this->backdropLogin($no_flag_user);
 
-    $this->drupalGet('node/add/article');
+    $this->backdropGet('node/add/article');
 
     // Check that the flag form element cannot be seen.
     $this->assertNoText('Flag this item', t('Flag form element was not found.'));
@@ -458,23 +456,23 @@ class FlagAccessFormTestCase extends FlagTestCaseBase {
     $edit = array(
       'title' => 'node 1',
     );
-    $this->drupalPost('node/add/article', $edit, t('Save'));
+    $this->backdropPost('node/add/article', $edit, t('Save'));
 
-    $node = $this->drupalGetNodeByTitle($edit["title"]);
+    $node = $this->backdropGetNodeByTitle($edit["title"]);
 
     // Check the new node has not been flagged.
     $this->assertFalse($flag->is_flagged($node->nid), t('New node is not flagged.'));
 
     // Now set the variable so that the flag is set by default on new nodes.
-    variable_set('flag_' . $flag->name . '_default_' . 'article', 1);
+    config_set('flag.settings', 'flag_' . $flag->name . '_default_' . 'article', 1);
 
     // Create another new node.
     $edit = array(
       'title' => 'node 2',
     );
-    $this->drupalPost('node/add/article', $edit, t('Save'));
+    $this->backdropPost('node/add/article', $edit, t('Save'));
 
-    $node = $this->drupalGetNodeByTitle($edit["title"]);
+    $node = $this->backdropGetNodeByTitle($edit["title"]);
 
     // Check the new node has been flagged, despite the user not having access
     // to the flag.
@@ -543,20 +541,19 @@ class FlagEntityTokensTestCase extends FlagTestCaseBase {
     $flag = $this->createFlag($flag_data);
 
     // Create a node to flag.
-    $node = (object) array(
+    $node =  $this->backdropCreateNode(array(
       'type' => 'article',
       'title' => $this->randomName(),
-    );
-    node_save($node);
+    ));
 
     // Flag it by several users.
-    $flag_user_1 = $this->drupalCreateUser(array('flag node_flag',));
+    $flag_user_1 = $this->backdropCreateUser(array('flag node_flag',));
 
     // Flag the node as the user.
     $flag = flag_get_flag('node_flag');
     $flag->flag('flag', $node->nid, $flag_user_1);
 
-    $flag_user_2 = $this->drupalCreateUser(array('flag node_flag',));
+    $flag_user_2 = $this->backdropCreateUser(array('flag node_flag',));
 
     // Flag the node as the user.
     $flag->flag('flag', $node->nid, $flag_user_2);
@@ -615,13 +612,13 @@ class FlagEntityTokensTestCase extends FlagTestCaseBase {
     taxonomy_term_save($term);
 
     // Flag it by several users.
-    $flag_user_1 = $this->drupalCreateUser(array('flag term_flag',));
+    $flag_user_1 = $this->backdropCreateUser(array('flag term_flag',));
 
     // Flag the term as the user.
     $flag = flag_get_flag('term_flag');
     $flag->flag('flag', $term->tid, $flag_user_1);
 
-    $flag_user_2 = $this->drupalCreateUser(array('flag term_flag',));
+    $flag_user_2 = $this->backdropCreateUser(array('flag term_flag',));
 
     // Flag the term as the user.
     $flag = flag_get_flag('term_flag');
@@ -667,7 +664,7 @@ class FlagAccessLinkTestCase extends FlagTestCaseBase {
       'title' => 'Test Flag',
       'global' => 0,
       'types' => array(
-        0 => 'article',
+        'article' => 'article',
       ),
       'flag_short' => 'Flag this item',
       'flag_long' => '',
@@ -693,15 +690,13 @@ class FlagAccessLinkTestCase extends FlagTestCaseBase {
 
     // Create an article node that various users will try to flag.
     $title = $this->randomName(8);
-    $node = array(
+    $node =  $this->backdropCreateNode(array(
       'title' => $title,
       'body' => array(LANGUAGE_NONE => array(array('value' => $this->randomName(32)))),
       'uid' => 1,
       'type' => 'article',
       'is_new' => TRUE,
-    );
-    $node = node_submit((object) $node);
-    node_save($node);
+    ));
     $this->nid = $node->nid;
   }
 
@@ -710,11 +705,11 @@ class FlagAccessLinkTestCase extends FlagTestCaseBase {
    */
   function testFlagAccessNone() {
     // Create test user who can't flag at all.
-    $no_flag_user = $this->drupalCreateUser(array());
-    $this->drupalLogin($no_flag_user);
+    $no_flag_user = $this->backdropCreateUser(array());
+    $this->backdropLogin($no_flag_user);
 
     // Look at our node.
-    $this->drupalGet('node/' . $this->nid);
+    $this->backdropGet('node/' . $this->nid);
 
     $this->assertNoLink('Flag this item', 0, 'The flag link does not appear on the page');
   }
@@ -724,11 +719,11 @@ class FlagAccessLinkTestCase extends FlagTestCaseBase {
    */
   function testFlagAccessFlagOnly() {
     // Create test user who can flag but not unflag.
-    $flag_user = $this->drupalCreateUser(array('flag test_flag',));
-    $this->drupalLogin($flag_user);
+    $flag_user = $this->backdropCreateUser(array('flag test_flag',));
+    $this->backdropLogin($flag_user);
 
     // Look at our node.
-    $this->drupalGet('node/' . $this->nid);
+    $this->backdropGet('node/' . $this->nid);
 
     $this->assertLink('Flag this item', 0, 'The flag link appears on the page.');
 
@@ -743,11 +738,11 @@ class FlagAccessLinkTestCase extends FlagTestCaseBase {
    */
   function testFlagAccessFlagUnflag() {
     // Create test user who can flag and unflag.
-    $flag_unflag_user = $this->drupalCreateUser(array('flag test_flag', 'unflag test_flag'));
-    $this->drupalLogin($flag_unflag_user);
+    $flag_unflag_user = $this->backdropCreateUser(array('flag test_flag', 'unflag test_flag'));
+    $this->backdropLogin($flag_unflag_user);
 
     // Look at our node.
-    $this->drupalGet('node/' . $this->nid);
+    $this->backdropGet('node/' . $this->nid);
 
     $this->assertLink('Flag this item', 0, 'The flag link appears on the page.');
 
@@ -767,7 +762,7 @@ class FlagAccessLinkTestCase extends FlagTestCaseBase {
 /**
  * Test the 'confirm form' link type.
  */
-class FlagLinkTypeConfirmTestCase extends DrupalWebTestCase {
+class FlagLinkTypeConfirmTestCase extends BackdropWebTestCase {
 
   /**
    * Implements getInfo().
@@ -826,20 +821,18 @@ class FlagLinkTypeConfirmTestCase extends DrupalWebTestCase {
     $this->checkPermissions(array(), TRUE);
 
     // Create test user who can flag and unflag.
-    $this->flag_unflag_user = $this->drupalCreateUser(array('flag test_flag', 'unflag test_flag'));
-    $this->drupalLogin($this->flag_unflag_user);
+    $this->flag_unflag_user = $this->backdropCreateUser(array('flag test_flag', 'unflag test_flag'));
+    $this->backdropLogin($this->flag_unflag_user);
 
     // Create an article node to flag and unflag.
     $title = $this->randomName(8);
-    $node = array(
+    $node =  $this->backdropCreateNode(array(
       'title' => $title,
       'body' => array(LANGUAGE_NONE => array(array('value' => $this->randomName(32)))),
       'uid' => 1,
       'type' => 'article',
       'is_new' => TRUE,
-    );
-    $node = node_submit((object) $node);
-    node_save($node);
+    ));
     $this->nid = $node->nid;
   }
 
@@ -848,7 +841,7 @@ class FlagLinkTypeConfirmTestCase extends DrupalWebTestCase {
    */
   function testFlag() {
     // Look at our node.
-    $this->drupalGet('node/' . $this->nid);
+    $this->backdropGet('node/' . $this->nid);
 
     $flag_short_label = strip_tags($this->flag_data['flag_short']);
 
@@ -877,7 +870,7 @@ class FlagLinkTypeConfirmTestCase extends DrupalWebTestCase {
     $this->assertPattern('@<input [^>]* value="' . $flag_short_label . '" [^>]*>@', 'The flag text, excluding HTML, is shown in the button.');
 
     // Click the button to confirm the flagging.
-    $this->drupalPost(NULL, array(), $flag_short_label);
+    $this->backdropPost(NULL, array(), $flag_short_label);
 
     $this->assertText($this->flag_data['flag_message'], 'The flag message appears once the item has been flagged.');
     $this->assertLink($this->flag_data['unflag_short'], 0, 'The unflag link appears once the item has been flagged.');
@@ -898,7 +891,7 @@ class FlagLinkTypeConfirmTestCase extends DrupalWebTestCase {
     $this->assertText($this->flag_data['unflag_confirmation'], 'The unflag confirmation text appears as the confirmation page title.');
 
     // Click the button to confirm the flagging.
-    $this->drupalPost(NULL, array(), $this->flag_data['unflag_short']);
+    $this->backdropPost(NULL, array(), $this->flag_data['unflag_short']);
 
     $this->assertText($this->flag_data['unflag_message'], 'The unflag message appears once the item has been flagged.');
 
@@ -966,15 +959,13 @@ class FlagHookFlagAccessTestCase extends FlagTestCaseBase {
 
     // Create an article node that various users will try to flag.
     $title = $this->randomName(8);
-    $node = array(
+    $node =  $this->backdropCreateNode(array(
       'title' => $title,
       'body' => array(LANGUAGE_NONE => array(array('value' => $this->randomName(32)))),
       'uid' => 1,
       'type' => 'article',
       'is_new' => TRUE,
-    );
-    $node = node_submit((object) $node);
-    node_save($node);
+    ));
     $this->nid = $node->nid;
   }
 
@@ -982,12 +973,12 @@ class FlagHookFlagAccessTestCase extends FlagTestCaseBase {
    * Verifies that the user sees the flag if a module returns NULL (Ignore).
    */
   function testFlagAccessIgnore() {
-    variable_set('FlagHookFlagAccessTestCaseMode', 'ignore');
-    $flag_user = $this->drupalCreateUser(array('flag test_flag', 'unflag test_flag'));
-    $this->drupalLogin($flag_user);
+    config_set('flag.settings', 'FlagHookFlagAccessTestCaseMode', 'ignore');
+    $flag_user = $this->backdropCreateUser(array('flag test_flag', 'unflag test_flag'));
+    $this->backdropLogin($flag_user);
 
     // Look at our node.
-    $this->drupalGet('node/' . $this->nid);
+    $this->backdropGet('node/' . $this->nid);
 
     $this->assertLink('Flag this item', 0, 'The flag link appears on the page.');
 
@@ -1006,12 +997,12 @@ class FlagHookFlagAccessTestCase extends FlagTestCaseBase {
    * Verifies that the user sees the flag if a module returns TRUE (Allow).
    */
   function testFlagAccessAllow() {
-    variable_set('FlagHookFlagAccessTestCaseMode', 'allow');
-    $flag_user = $this->drupalCreateUser(array('flag test_flag', 'unflag test_flag'));
-    $this->drupalLogin($flag_user);
+    config_set('flag.settings', 'FlagHookFlagAccessTestCaseMode', 'allow');
+    $flag_user = $this->backdropCreateUser(array('flag test_flag', 'unflag test_flag'));
+    $this->backdropLogin($flag_user);
 
     // Look at our node.
-    $this->drupalGet('node/' . $this->nid);
+    $this->backdropGet('node/' . $this->nid);
 
     $this->assertLink('Flag this item', 0, 'The flag link appears on the page.');
 
@@ -1031,12 +1022,12 @@ class FlagHookFlagAccessTestCase extends FlagTestCaseBase {
    * override default access check.
    */
   function testFlagAccessAllowOverride() {
-    variable_set('FlagHookFlagAccessTestCaseMode', 'allow');
-    $flag_user = $this->drupalCreateUser(array());
-    $this->drupalLogin($flag_user);
+    config_set('flag.settings', 'FlagHookFlagAccessTestCaseMode', 'allow');
+    $flag_user = $this->backdropCreateUser(array());
+    $this->backdropLogin($flag_user);
 
     // Look at our node.
-    $this->drupalGet('node/' . $this->nid);
+    $this->backdropGet('node/' . $this->nid);
 
     $this->assertLink('Flag this item', 0, 'The flag link appears on the page.');
 
@@ -1056,12 +1047,12 @@ class FlagHookFlagAccessTestCase extends FlagTestCaseBase {
    * (Deny).
    */
   function testFlagAccessDeny() {
-    variable_set('FlagHookFlagAccessTestCaseMode', 'deny');
-    $flag_user = $this->drupalCreateUser(array('flag test_flag', 'unflag test_flag'));
-    $this->drupalLogin($flag_user);
+    config_set('flag.settings', 'FlagHookFlagAccessTestCaseMode', 'deny');
+    $flag_user = $this->backdropCreateUser(array('flag test_flag', 'unflag test_flag'));
+    $this->backdropLogin($flag_user);
 
     // Look at our node.
-    $this->drupalGet('node/' . $this->nid);
+    $this->backdropGet('node/' . $this->nid);
 
     $this->assertNoLink('Flag this item', 0, 'The flag link does not appear on the page.');
   }
@@ -1094,15 +1085,15 @@ class FlagFlaggingFieldTestCase extends FlagTestCaseBase {
   function testFlaggingFields() {
     $this->assertTrue(1);
 
-    $flag_user = $this->drupalCreateUser(array(
+    $flag_user = $this->backdropCreateUser(array(
       'flag flag_fields_test_flag',
       'unflag flag_fields_test_flag',
     ));
-    $this->drupalLogin($flag_user);
+    $this->backdropLogin($flag_user);
 
-    $node = $this->drupalCreateNode();
+    $node = $this->backdropCreateNode();
 
-    $this->drupalGet('node/' . $node->nid);
+    $this->backdropGet('node/' . $node->nid);
 
     $this->clickLink('Flag with the test flag');
 
@@ -1112,7 +1103,7 @@ class FlagFlaggingFieldTestCase extends FlagTestCaseBase {
     $edit = array(
       'flag_fields_test_integer[und][0][value]' => 'banana',
     );
-    $this->drupalPost(NULL, $edit, 'Flag with the test flag');
+    $this->backdropPost(NULL, $edit, 'Flag with the test flag');
 
     $this->assertText("Only numbers are allowed in Test integer.", "Form validation correctly failed the input.");
 
@@ -1120,14 +1111,14 @@ class FlagFlaggingFieldTestCase extends FlagTestCaseBase {
     $edit = array(
       'flag_fields_test_integer[und][0][value]' => 12,
     );
-    $this->drupalPost(NULL, $edit, 'Flag with the test flag');
+    $this->backdropPost(NULL, $edit, 'Flag with the test flag');
 
     $this->assertText("Test integer: the value may be no greater than 11.", "Form validation correctly failed the input.");
 
     $edit = array(
       'flag_fields_test_integer[und][0][value]' => 6,
     );
-    $this->drupalPost(NULL, $edit, 'Flag with the test flag');
+    $this->backdropPost(NULL, $edit, 'Flag with the test flag');
 
     $this->assertUrl('node/' . $node->nid, array(), "The flagging form submission succeeded.");
 
@@ -1203,13 +1194,13 @@ class FlagEntityFieldQueryTestCase extends FlagTestCaseBase {
     $this->flag3 = $this->createFlag($flag_data);
 
     // Create test user who can flag and unflag.
-    $this->flag_unflag_user = $this->drupalCreateUser(array(
+    $this->flag_unflag_user = $this->backdropCreateUser(array(
       'flag test_flag_1',
       'unflag test_flag_1',
       'flag test_flag_2',
       'unflag test_flag_2',
     ));
-    $this->drupalLogin($this->flag_unflag_user);
+    $this->backdropLogin($this->flag_unflag_user);
 
   }
 
@@ -1224,7 +1215,7 @@ class FlagEntityFieldQueryTestCase extends FlagTestCaseBase {
       'type' => 'article',
       'is_new' => TRUE,
     );
-    $node = $this->drupalCreateNode($node_settings);
+    $node = $this->backdropCreateNode($node_settings);
 
     flag('flag', 'test_flag_1', $node->nid, $this->flag_unflag_user);
     flag('flag', 'test_flag_2', $node->nid, $this->flag_unflag_user);
@@ -1275,8 +1266,8 @@ class FlagHookInvocationsTestCase extends FlagTestCaseBase {
     // Note the test module contains our test flag.
 
     // Create test user who can flag and unflag.
-    $this->flag_unflag_user = $this->drupalCreateUser(array('flag flag_hook_test_flag', 'unflag flag_hook_test_flag'));
-    $this->drupalLogin($this->flag_unflag_user);
+    $this->flag_unflag_user = $this->backdropCreateUser(array('flag flag_hook_test_flag', 'unflag flag_hook_test_flag'));
+    $this->backdropLogin($this->flag_unflag_user);
   }
 
   /**
@@ -1291,26 +1282,24 @@ class FlagHookInvocationsTestCase extends FlagTestCaseBase {
   function testHookInvocation() {
     // Create an article node that we try to create a flagging entity for.
     $title = $this->randomName(8);
-    $node = array(
+    $node =  $this->backdropCreateNode(array(
       'title' => $title,
       'body' => array(LANGUAGE_NONE => array(array('value' => $this->randomName(32)))),
       'uid' => 1,
       'type' => 'article',
       'is_new' => TRUE,
-    );
-    $node = node_submit((object) $node);
-    node_save($node);
+    ));
 
     // Initialize a tracking variable. The test module will update this when
     // its hooks are invoked.
-    variable_set('flag_hook_test_hook_tracking', array());
+    config_set('flag.settings', 'flag_hook_test_hook_tracking', array());
 
     // Flag the node as the user.
     $flag = flag_get_flag('flag_hook_test_flag');
     $flag->flag('flag', $node->nid, $this->flag_unflag_user);
 
     // Get the variable the test module sets the hook order into.
-    $hook_data_variable = variable_get('flag_hook_test_hook_tracking', array());
+    $hook_data_variable = config_get('flag.settings', 'flag_hook_test_hook_tracking');
     //debug($hook_data_variable['hook_entity_presave']);
     //debug($hook_data_variable['hook_entity_insert']);
 
@@ -1428,7 +1417,7 @@ class FlagHookInvocationsTestCase extends FlagTestCaseBase {
     $this->assertEqual($flag_get_user_flag_counts, 1, "hook_flag_flag() gets a correct flag count from flag_get_user_flag_counts().");
 
     // Clear the tracking variable.
-    variable_set('flag_hook_test_hook_tracking', array());
+    config_set('flag.settings', 'flag_hook_test_hook_tracking', array());
 
     // Get the Flagging, and re-flag the node.
     // This does nothing in our case, but is the API for updating a Flagging
@@ -1448,7 +1437,7 @@ class FlagHookInvocationsTestCase extends FlagTestCaseBase {
     $flag->flag('flag', $node->nid, $this->flag_unflag_user, FALSE, $flagging);
 
     // Get the variable the test module sets the hook order into.
-    $hook_data_variable = variable_get('flag_hook_test_hook_tracking', array());
+    $hook_data_variable = config_get('flag.settings', 'flag_hook_test_hook_tracking');
     //debug($hook_data_variable);
 
     $expected_hook_order = array(
@@ -1541,13 +1530,13 @@ class FlagHookInvocationsTestCase extends FlagTestCaseBase {
     $this->assertEqual($flag_get_user_flag_counts, 1, "hook_entity_update() gets a correct flag count from flag_get_user_flag_counts().");
 
     // Clear the tracking variable.
-    variable_set('flag_hook_test_hook_tracking', array());
+    config_set('flag.settings', 'flag_hook_test_hook_tracking', array());
 
     // Unflag the node as the user.
     $flag->flag('unflag', $node->nid, $this->flag_unflag_user);
 
     // Get the variable the test module sets the hook order into.
-    $hook_data_variable = variable_get('flag_hook_test_hook_tracking', array());
+    $hook_data_variable = config_get('flag.settings', 'flag_hook_test_hook_tracking');
     //debug($hook_data_variable);
 
     $expected_hook_order = array(
