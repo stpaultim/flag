@@ -1017,7 +1017,7 @@ class FlagFlaggingFieldTestCase extends FlagTestCaseBase {
     );
     $this->backdropPost(NULL, $edit, 'Flag with the test flag');
 
-    $this->assertText("Only numbers are allowed in Test integer.", "Form validation correctly failed the input.");
+    $this->assertText("Test integer must be a number.", "Form validation correctly failed the input.");
 
     // Try to fail the form validation by a number that's out of bounds.
     $edit = array(
@@ -1025,7 +1025,7 @@ class FlagFlaggingFieldTestCase extends FlagTestCaseBase {
     );
     $this->backdropPost(NULL, $edit, 'Flag with the test flag');
 
-    $this->assertText("Test integer: the value may be no greater than 11.", "Form validation correctly failed the input.");
+    $this->assertText("Test integer must be below or equal to 11.", "Form validation correctly failed the input.");
 
     $edit = array(
       'flag_fields_test_integer[und][0][value]' => 6,
