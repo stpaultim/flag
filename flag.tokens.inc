@@ -77,28 +77,24 @@ function flag_token_info() {
   );
 
   // Add tokens for the flag count available at the entity level.
-  // These require token module because we need its helper data and functions
-  // to deal with token types that are not the same as the entity types they are
-  // for (in particular, terms and vocabularies).
-  if (module_exists('token')) {
-    $entity_info = entity_get_info();
-    foreach (flag_get_types() as $flag_type) {
-      // The flag type is the entity type, but this is not necessarily the same
-      // as the entity's token type.
-      $token_type = $entity_info[$flag_type]['token type'];
-      $flags = flag_get_flags($flag_type);
-      foreach ($flags as $flag) {
-        $tokens[$token_type]['flag-' . str_replace('_', '-', $flag->name) . '-count'] = array(
-          'name' => t('@flag flag count', array('@flag' => $flag->get_title())),
-          'description' => t('Total flag count for flag @flag', array('@flag' => $flag->get_title())),
-          'flag-type' => $flag_type,
-        );
-        $tokens[$token_type]['flag-' . str_replace('_', '-', $flag->name) . '-link'] = array(
-          'name' => t('@flag flag link', array('@flag' => $flag->get_title())),
-          'description' => t('Flag/unflag link for @flag', array('@flag' => $flag->get_title())),
-          'flag-type' => $flag_type,
-        );
-      }
+
+  foreach (flag_get_types() as $flag_type) {
+    // The flag type is the entity type, but this is not necessarily the same
+    // as the entity's token type.
+    $token_type = _flag_entity_token_type($flag_type);
+
+    $flags = flag_get_flags($flag_type);
+    foreach ($flags as $flag) {
+      $tokens[$token_type]['flag-' . str_replace('_', '-', $flag->name) . '-count'] = array(
+        'name' => t('@flag flag count', array('@flag' => $flag->get_title())),
+        'description' => t('Total flag count for flag @flag', array('@flag' => $flag->get_title())),
+        'flag-type' => $flag_type,
+      );
+      $tokens[$token_type]['flag-' . str_replace('_', '-', $flag->name) . '-link'] = array(
+        'name' => t('@flag flag link', array('@flag' => $flag->get_title())),
+        'description' => t('Flag/unflag link for @flag', array('@flag' => $flag->get_title())),
+        'flag-type' => $flag_type,
+      );
     }
   }
 
@@ -176,8 +172,9 @@ function flag_tokens($type, $tokens, array $data = array(), array $options = arr
 
   // We only provide tokens on entity types if we have token module's helper
   // methods available.
-  if (isset($data[$type]) && module_exists('token')) {
-    $entity_type = token_get_entity_mapping('token', $type);
+  if (isset($data[$type])) {
+    $entity_type = _flag_token_entity_type($type);
+
     if ($entity_type && in_array($entity_type, flag_get_types())) {
       $flags = flag_get_flags($entity_type);
       $object = $data[$type];
@@ -216,4 +213,53 @@ function theme_flag_tokens_browser($variables) {
   else {
     return '<p><em>' . t("Note: You don't have the <a href='@token-url'>Token</a> module installed, so the list of available tokens isn't shown here. You don't have to install <a href='@token-url'>Token</a> to be able to use tokens, but if you have it installed, and enabled, you'll be able to enjoy an interactive tokens browser.", array('@token-url' => 'http://drupal.org/project/token')) . '</em></p>';
   }
+}
+
+/*
+ * Returns corresponding token type name given entity type name.
+ *
+ * @parm $entity_type
+ *   Entity type name.
+ *
+ * @return
+ *   Token type name.
+ *
+ * Flag module can add flags to any entity, and provide flag-related tokens
+ * on entities.
+ *
+ * Tokens are prefixed by a 'token type' which is generally the entity type
+ * name, but not always.  Backdrop core does not provide a mapping for this.
+ * Token module can provide this, but if it is not available, we'll make an
+ * educated guess.
+ */
+function _flag_entity_token_type($entity_type) {
+  $info = entity_get_info($entity_type);
+
+  // check if token module already provided this via hook_entity_info_alter()
+  if (isset($info['token type'])) {
+    return $info['token type'];
+  }
+  if ($entity_type === 'taxonomy_term') {
+    return 'term';
+  }
+  return $entity_type;
+}
+
+/*
+ * Returns corresponding entity type name given token type name.
+ *
+ * @param $token_type
+ *   A token type string
+ *
+ * @return
+ *   An entity type name.
+ */
+function _flag_token_entity_type($token_type) {
+  if (module_exists('token')) {
+    return token_get_entity_mapping('token', $type);
+  }
+  if ($token_type === 'term') {
+    return 'taxonomy_term';
+  }
+  return $token_type;
 }
