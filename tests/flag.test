@@ -196,7 +196,7 @@ class FlagFlaggingCRUDTestCase extends FlagTestCaseBase {
 }
 
 /**
- * Test Flag admin UI.
+ * Test Flag admin UI: add, edit and delete flags.
  */
 class FlagAdminTestCase extends FlagTestCaseBase {
   public $_flag = FALSE;
@@ -234,8 +234,8 @@ class FlagAdminTestCase extends FlagTestCaseBase {
       'unflag_short'        => 'unflag short [node:nid]',
       'unflag_long'         => 'unflag long [node:nid]',
       'unflag_message'      => 'unflag message [node:nid]',
-      'roles[flag][BACKDROP_AUTHENTICATED_ROLE]' => 'BACKDROP_AUTHENTICATED_ROLE',
-      'roles[unflag][BACKDROP_AUTHENTICATED_ROLE]' => 'BACKDROP_AUTHENTICATED_ROLE',
+      'roles[flag]['.BACKDROP_AUTHENTICATED_ROLE.']' => BACKDROP_AUTHENTICATED_ROLE,
+      'roles[unflag]['.BACKDROP_AUTHENTICATED_ROLE.']' => BACKDROP_AUTHENTICATED_ROLE,
       'types[article]' => FALSE,
       'types[page]' => TRUE,
       'show_in_links[full]' => FALSE,
@@ -248,8 +248,8 @@ class FlagAdminTestCase extends FlagTestCaseBase {
     );
     $saved = $edit;
     $saved['roles'] = array(
-      'flag' => array(BACKDROP_AUTHENTICATED_ROLE=>BACKDROP_AUTHENTICATED_ROLE),
-      'unflag' => array(BACKDROP_AUTHENTICATED_ROLE=>BACKDROP_AUTHENTICATED_ROLE)
+      'flag' => array(BACKDROP_AUTHENTICATED_ROLE),
+      'unflag' => array(BACKDROP_AUTHENTICATED_ROLE)
     );
     $saved['types'] = array('page');
     $saved['show_in_links'] = array(
@@ -259,15 +259,24 @@ class FlagAdminTestCase extends FlagTestCaseBase {
       'search_index' => 0,
       'search_result' => 0,
     );
-    unset($saved['roles[flag][BACKDROP_AUTHENTICATED_ROLE]'], $saved['roles[unflag][BACKDROP_AUTHENTICATED_ROLE]'], $saved['types[article]'], $saved['types[page]'], $saved['show_in_links[full]'], $saved['show_in_links[teaser]'], $saved['show_in_links[rss]'], $saved['show_in_links[search_index]'], $saved['show_in_links[search_result]']);
+    unset($saved['roles[flag]['.BACKDROP_AUTHENTICATED_ROLE.']'], $saved['roles[unflag]['.BACKDROP_AUTHENTICATED_ROLE.']'], $saved['types[article]'], $saved['types[page]'], $saved['show_in_links[full]'], $saved['show_in_links[teaser]'], $saved['show_in_links[rss]'], $saved['show_in_links[search_index]'], $saved['show_in_links[search_result]']);
 
     $this->backdropPost(FLAG_ADMIN_PATH . '/add/node', $edit, t('Save flag'));
 
     backdrop_static_reset('flag_get_flags');
     $flag = flag_get_flag($edit['name']);
 
+    $names = config_get_names_with_prefix('user.role.');
+    foreach ($names as $config_name) {
+      $config = config($config_name);
+    }
+
     // Check that the flag object is in the database.
     $this->assertTrue($flag != FALSE, t('Flag object found in database'));
+
+    // Clear the user access cache so our changes to permissions are noticed.
+    backdrop_static_reset('user_roles');
+    backdrop_static_reset('user_access');
 
     // Load the roles array for checking it matches.
     $flag->fetch_roles();
@@ -278,11 +287,12 @@ class FlagAdminTestCase extends FlagTestCaseBase {
     }
 
     // Check permissions.
-    $permissions = user_role_permissions(user_roles());
-    foreach ($saved['roles'] as $action => $rids) {
-      foreach ($rids as $rid) {
+    $user_roles = user_roles(FALSE, NULL, TRUE); // get all role objects
+
+    foreach ($saved['roles'] as $action => $roles) {
+      foreach ($roles as $role) {
         $permission_string = "$action " . $saved['name'];
-        $this->assertTrue(isset($permissions[$rid][$permission_string]), t('Permission %perm set for flag.', array(
+        $this->assertTrue(isset($user_roles[$role]->permissions) && in_array($permission_string, $user_roles[$role]->permissions, TRUE), t('Permission %perm set for flag.', array(
           '%perm' => $permission_string,
         )));
       }
@@ -298,8 +308,8 @@ class FlagAdminTestCase extends FlagTestCaseBase {
       'unflag_short'        => 'unflag 2 short [node:nid]',
       'unflag_long'         => 'unflag 2 long [node:nid]',
       'unflag_message'      => 'unflag 2 message [node:nid]',
-      'roles[flag][BACKDROP_AUTHENTICATED_ROLE]' => 'BACKDROP_AUTHENTICATED_ROLE',
-      'roles[unflag][BACKDROP_AUTHENTICATED_ROLE]' => 'BACKDROP_AUTHENTICATED_ROLE',
+      'roles[flag]['.BACKDROP_AUTHENTICATED_ROLE.']' => BACKDROP_AUTHENTICATED_ROLE,
+      'roles[unflag]['.BACKDROP_AUTHENTICATED_ROLE.']' => BACKDROP_AUTHENTICATED_ROLE,
       'types[article]' => TRUE,
       'types[page]' => FALSE,
       'show_in_links[full]' => TRUE,
@@ -311,7 +321,10 @@ class FlagAdminTestCase extends FlagTestCaseBase {
       'link_type' => 'normal',
     );
     $saved = $edit;
-    $saved['roles'] = array('flag' => array(BACKDROP_AUTHENTICATED_ROLE), 'unflag' => array(BACKDROP_AUTHENTICATED_ROLE));
+    $saved['roles'] = array(
+      'flag' => array(BACKDROP_AUTHENTICATED_ROLE),
+      'unflag' => array(BACKDROP_AUTHENTICATED_ROLE)
+    );
     $saved['types'] = array('article');
     $saved['show_in_links'] = array(
       'full' => TRUE,
@@ -320,49 +333,50 @@ class FlagAdminTestCase extends FlagTestCaseBase {
       'search_index' => 0,
       'search_result' => 0,
     );
-    unset($saved['roles[flag][BACKDROP_AUTHENTICATED_ROLE]'], $saved['roles[unflag][BACKDROP_AUTHENTICATED_ROLE]'], $saved['types[article]'], $saved['types[page]'], $saved['show_in_links[full]'], $saved['show_in_links[teaser]'], $saved['show_in_links[rss]'], $saved['show_in_links[search_index]'], $saved['show_in_links[search_result]']);
+    unset($saved['roles[flag]['.BACKDROP_AUTHENTICATED_ROLE.']'], $saved['roles[unflag]['.BACKDROP_AUTHENTICATED_ROLE.']'], $saved['types[article]'], $saved['types[page]'], $saved['show_in_links[full]'], $saved['show_in_links[teaser]'], $saved['show_in_links[rss]'], $saved['show_in_links[search_index]'], $saved['show_in_links[search_result]']);
 
     $this->backdropPost(FLAG_ADMIN_PATH . '/manage/' . $flag->name, $edit, t('Save flag'));
 
     backdrop_static_reset('flag_get_flags');
     $flag = flag_get_flag($edit['name']);
-    // Load the roles array for checking it matches.
-    $flag->fetch_roles();
 
     // Check that the flag object is in the database.
     $this->assertTrue($flag != FALSE, t('Flag object found in database'));
+
+    // Clear the user access cache so our changes to permissions are noticed.
+    backdrop_static_reset('user_roles');
+    backdrop_static_reset('user_access');
+
+    // Load the roles array for checking it matches.
+    $flag->fetch_roles();
 
     // Check each individual property of the flag and make sure it was set.
     foreach ($saved as $property => $value) {
       $this->assertEqual($flag->$property, $value, t('Flag property %property properly saved.', array('%property' => $property)));
     }
 
-    // Clear the user access cache so our changes to permissions are noticed.
-    backdrop_static_reset('user_access');
-    backdrop_static_reset('user_role_permissions');
-
     // Check permissions.
-    $permissions = user_role_permissions(user_roles());
+    $user_roles = user_roles(FALSE, NULL, TRUE); // get all role objects
 
-    foreach ($saved['roles'] as $action => $rids) {
-      foreach ($rids as $rid) {
+    foreach ($saved['roles'] as $action => $roles) {
+      foreach ($roles as $role) {
         $permission_string = "$action " . $saved['name'];
-        $this->assertTrue(isset($permissions[$rid][$permission_string]), t('Permission %perm set for flag.', array(
+        $this->assertTrue(isset($user_roles[$role]->permissions) && in_array($permission_string, $user_roles[$role]->permissions, TRUE), t('Permission %perm set for flag.', array(
           '%perm' => $permission_string,
         )));
       }
     }
+
 
     // Delete the flag through the UI.
     $this->backdropPost(FLAG_ADMIN_PATH . '/manage/' . $flag->name . '/delete', array(), t('Delete'));
     backdrop_static_reset('flag_get_flags');
     $this->assertFalse(flag_get_flag($flag->name), t('Flag successfully deleted.'));
   }
-
 }
 
 /**
- * Access to flags using the entity forms.
+ * Access to flag and unflag entities via entity forms.
  *
  * @todo: complete this test class.
  */
@@ -449,7 +463,7 @@ class FlagAccessFormTestCase extends FlagTestCaseBase {
 }
 
 /**
- * Tokens we provide on generic entities.
+ * Tokens for flag count on entities.
  */
 class FlagEntityTokensTestCase extends FlagTestCaseBase {
 
@@ -458,7 +472,7 @@ class FlagEntityTokensTestCase extends FlagTestCaseBase {
    */
   function setUp() {
     // Our entity tokens require token module.
-    parent::setUp('flag', 'token');
+    parent::setUp('flag' /*, 'token' */);
   }
 
   /**
@@ -558,13 +572,16 @@ class FlagEntityTokensTestCase extends FlagTestCaseBase {
     );
     $flag = $this->createFlag($flag_data);
 
-    $vocabulary = taxonomy_vocabulary_load(1);
+    $vocabulary = taxonomy_vocabulary_load('tags');
 
     // Create a term to flag.
-    $term = (object) array(
+    $term = entity_create('taxonomy_term', array(
       'name' => $this->randomName(),
-      'vid' => 1,
-    );
+      'description' => $this->randomName(),
+      'format' => filter_default_format(),
+      'vocabulary' => $vocabulary->machine_name,
+      'langcode' => LANGUAGE_NONE,
+    ));
     taxonomy_term_save($term);
 
     // Flag it by several users.
@@ -592,7 +609,7 @@ class FlagEntityTokensTestCase extends FlagTestCaseBase {
 }
 
 /**
- * Access to flags using the basic flag link.
+ * Access to flag and unflag entities using the basic link.
  */
 class FlagAccessLinkTestCase extends FlagTestCaseBase {
 
@@ -609,7 +626,7 @@ class FlagAccessLinkTestCase extends FlagTestCaseBase {
       'title' => 'Test Flag',
       'global' => 0,
       'types' => array(
-        'article' => 'article',
+        0 => 'article',
       ),
       'flag_short' => 'Flag this item',
       'flag_long' => '',
