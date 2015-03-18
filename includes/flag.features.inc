@@ -77,7 +77,7 @@ function flag_features_export_render($module, $data) {
 function flag_features_revert($module = NULL) {
   // Get default flags from features.
   if (module_hook($module, 'flag_default_flags')) {
-    module_load_include('inc', 'flag', '/includes/flag.admin');
+    module_load_include('inc', 'flag', 'flag.admin');
     $default_flags = module_invoke($module, 'flag_default_flags');
 
     // Build up values for the cache clear.

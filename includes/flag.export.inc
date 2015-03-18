@@ -144,7 +144,7 @@ function flag_import_form_validate($form, &$form_state) {
  * Submit handler; Import a flag.
  */
 function flag_import_form_submit($form, &$form_state) {
-  module_load_include('inc', 'flag', 'includes/flag.admin');
+  module_load_include('inc', 'flag', 'flag.admin');
 
   // Build up values for the cache clear.
   $entity_types = array();
