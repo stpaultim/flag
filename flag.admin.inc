@@ -79,12 +79,18 @@ function theme_flag_admin_listing($variables) {
     $ops = array(
       'flags_edit' => array('title' => t('edit'), 'href' => $flag->admin_path('edit')),
       'flags_fields' => array('title' => t('manage fields'), 'href' => $flag->admin_path('fields')),
+      // 'flags_display' => array('title' => t('manage display'), 'href' => $flag->admin_path('display')),
       'flags_delete' => array('title' => t('delete'), 'href' => $flag->admin_path('delete')),
       'flags_export' => array('title' => t('export'), 'href' => $flag->admin_path('export')),
     );
     if (!module_exists('field_ui')) {
       unset($ops['flags_fields']);
+      // unset($ops['flags_display']);
     }
+    $links = array(
+      '#type' => 'dropbutton',
+      '#links' => $ops,
+    );
     $permission = "flag $flag->name";
     $roles = user_roles(FALSE, $permission);
     $row = array();
@@ -96,7 +102,7 @@ function theme_flag_admin_listing($variables) {
     $row[] = empty($roles) ? '<em>' . t('No roles') . '</em>' : implode(', ', $roles);
     $row[] = $flag->types ? implode(', ', $flag->types) : '-';
     $row[] = $flag->global ? t('Yes') : t('No');
-    $row[] = theme('links', array('links' => $ops));
+    $row[] = backdrop_render($links);
 
     $rows[] = array(
       'data' => $row,
