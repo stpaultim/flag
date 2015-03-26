@@ -200,7 +200,11 @@ class flag_flag {
 
     // Merge in options from the current link type.
     $link_type = $this->get_link_type();
-    $options = array_merge($options, $link_type['options']);
+
+    // work-around for https://www.drupal.org/node/1925922
+    if (isset($link_type['options']) && is_array($link_type['options'])) {
+      $options = array_merge($options, $link_type['options']);
+    }
 
     // Allow other modules to change the flag options.
     backdrop_alter('flag_options', $options, $this);
