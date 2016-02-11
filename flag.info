@@ -2,6 +2,7 @@ name = Flag
 description = Create customized flags that users can set on entities.
 backdrop = 1.x
 package = Flags
+type = module
 configure = admin/structure/flags
 
 test_dependencies[] = token
