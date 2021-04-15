@@ -20,15 +20,16 @@ License
 This project is GPL v2 software. See the LICENSE.txt file in this directory for
 complete text.
 
-Current Maintainers
+Maintainers
 -------------------
 
-- John Romine (https://github.com/jromine/)
+- Herb v/d Dool (https://github.com/herbdool)
+- Seeking additional co-maintainers.
 
 Credits
 -------
 
-This module is based on the Drupal module Flag-7.x-3.x
+This module was ported by John Romine (https://github.com/jromine/) from the Drupal module Flag-7.x-3.x.
 
 Project page: http://drupal.org/project/flag.
 
