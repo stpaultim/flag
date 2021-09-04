@@ -35,6 +35,7 @@ function flag_autoload_info() {
     'flag_comment'                               => 'includes/flag/flag_comment.inc',
 
     'FlaggingController'                         => 'includes/flag.entity.inc',
+    'FlagCookieStorage'                          => 'includes/flag.cookie_storage.inc',
     'FlagGlobalCookieStorage'                    => 'includes/flag.cookie_storage.inc',
     'FlagNonGlobalCookieStorage'                 => 'includes/flag.cookie_storage.inc',
     'FlagUpdate_2'                               => 'includes/flag.export.inc',
