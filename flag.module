@@ -436,6 +436,8 @@ function _flag_menu_title($flag) {
 
 /**
  * Implements hook_help().
+ *
+ * @todo move to admin page or remove.
  */
 function flag_help($path, $arg) {
   switch ($path) {
