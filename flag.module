@@ -2438,7 +2438,7 @@ function flag_set_sid($uid = NULL, $create = TRUE) {
   // Set the sid if none has been set yet. If the caller specified to create an
   // sid and we have an invalid one (-1), create it.
   if (!isset($sids[$uid]) || ($sids[$uid] == -1 && $create)) {
-    if (module_exists('session_api') && session_api_available() && $uid == 0) {
+    if (module_exists('session_api') && $uid == 0) {
       // This returns one of the following:
       // - -1. This indicates that no session exists and none was created.
       // - A positive integer with the Session ID when it does exist.
