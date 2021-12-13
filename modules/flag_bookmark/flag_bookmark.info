@@ -1,5 +1,6 @@
 name = Flag Bookmark
 description = Provides an example bookmark flag and supporting views.
 backdrop = 1.x
+type = module
 dependencies[] = flag
 package = Flags

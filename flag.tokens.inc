@@ -207,12 +207,7 @@ function theme_flag_tokens_browser($variables) {
   $types = $variables['types'];
   $global_types = $variables['global_types'];
 
-  if (module_exists('token')) {
-    return theme('token_tree', array('token_types' => $types, 'global_types' => $global_types));
-  }
-  else {
-    return '<p><em>' . t("Note: You don't have the <a href='@token-url'>Token</a> module installed, so the list of available tokens isn't shown here. You don't have to install <a href='@token-url'>Token</a> to be able to use tokens, but if you have it installed, and enabled, you'll be able to enjoy an interactive tokens browser.", array('@token-url' => 'http://drupal.org/project/token')) . '</em></p>';
-  }
+  return theme('token_tree', array('token_types' => $types, 'global_types' => $global_types));
 }
 
 /*
@@ -255,11 +250,6 @@ function _flag_entity_token_type($entity_type) {
  *   An entity type name.
  */
 function _flag_token_entity_type($token_type) {
-  if (module_exists('token')) {
-    return token_get_entity_mapping('token', $type);
-  }
-  if ($token_type === 'term') {
-    return 'taxonomy_term';
-  }
-  return $token_type;
+  $info = entity_get_info($token_type);
+  return $info['token type'];
 }
