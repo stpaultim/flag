@@ -170,7 +170,7 @@ function flag_tokens($type, $tokens, array $data = array(), array $options = arr
     }
   }
 
-  // We only provide tokens on entity types if we have token module's helper
+  // We only provide tokens on entity types if we have token's helper
   // methods available.
   if (isset($data[$type])) {
     $entity_type = _flag_token_entity_type($type);
@@ -230,7 +230,7 @@ function theme_flag_tokens_browser($variables) {
 function _flag_entity_token_type($entity_type) {
   $info = entity_get_info($entity_type);
 
-  // check if token module already provided this via hook_entity_info_alter()
+  // check if token already provided this via hook_entity_info_alter()
   if (isset($info['token type'])) {
     return $info['token type'];
   }
@@ -250,6 +250,13 @@ function _flag_entity_token_type($entity_type) {
  *   An entity type name.
  */
 function _flag_token_entity_type($token_type) {
-  $info = entity_get_info($token_type);
-  return $info['token type'];
+  // Only concerned about entities available to flag.
+  $entity_types = flag_fetch_definition();
+  foreach ($entity_types as $entity_type => $description) {
+    $info = entity_get_info($entity_type);
+    if (isset($info['token type']) && $info['token type'] == $token_type) {
+      return $entity_type;
+    }
+  }
+  return FALSE;
 }
