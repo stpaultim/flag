@@ -1283,7 +1283,10 @@ class flag_flag {
   function get_valid_actions() {
     $actions = module_invoke_all('action_info');
     foreach ($actions as $callback => $action) {
-      if ($action['type'] != $this->entity_type && !in_array('any', $action['triggers'])) {
+      // Filter actions by needed type, and exclude all actions defined by flag
+      // itself, since these should not be triggered by the flag module.
+      // See https://github.com/backdrop-contrib/flag/issues/42
+      if ($action['type'] != $this->entity_type || in_array($callback, array('flag_node_action', 'flag_comment_action', 'flag_user_action'))) {
         unset($actions[$callback]);
       }
     }
