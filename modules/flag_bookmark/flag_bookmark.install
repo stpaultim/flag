@@ -53,6 +53,20 @@ function flag_bookmark_enable() {
 }
 
 /**
+ * Implements hook_uninstall().
+ */
+function flag_bookmark_uninstall() {
+  // Remove default, un-modified views.
+  foreach (array('flag_bookmarks', 'flag_bookmarks_tab') as $view) {
+    $config = config('views.view.' . $view);
+    // Only update if view isn't overridden (VIEWS_STORAGE_OVERRIDE).
+    if ($config->get('storage') != 2) {
+      $config->delete();
+    }
+  }
+}
+
+/**
  * Returns some node types to which the demonstration 'bookmarks' flag will
  * apply.
  */
@@ -260,7 +274,7 @@ function flag_bookmark_update_1000() {
         ),
       )
     );
-    $config->save();    
+    $config->save();
   }
 
   $config = config('views.view.flag_bookmarks');

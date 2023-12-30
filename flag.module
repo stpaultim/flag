@@ -18,6 +18,11 @@ function flag_config_info() {
     'label' => t('Flag settings'),
     'group' => t('Configuration'),
   );
+  $prefixes['flag.flag'] = array(
+    'name_key' => 'name',
+    'label_key' => 'title',
+    'group' => t('Flags'),
+  );
   return $prefixes;
 }
 
