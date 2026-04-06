@@ -76,7 +76,7 @@ class flag_entity extends flag_flag {
     $form['display']['show_as_field'] = array(
       '#type' => 'checkbox',
       '#title' => t('Display link as field when using "Manage display"'),
-      '#description' => t('CAUTION: Selecting this with other view modes may cause link to show up twice.'),
+      '#description' => t('Show the flag link as a pseudofield, which can be ordered among other entity elements in the "Manage display" settings for the entity type. CAUTION: Selecting this with other view modes may cause link to show up twice.'),
       '#default_value' => isset($this->show_as_field) ? $this->show_as_field : TRUE,
     );
     if (empty($entity_info['fieldable'])) {
